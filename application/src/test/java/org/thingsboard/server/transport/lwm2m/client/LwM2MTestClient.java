@@ -53,10 +53,8 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static org.eclipse.leshan.core.LwM2mId.DEVICE;
-import static org.eclipse.leshan.core.LwM2mId.FIRMWARE;
 import static org.eclipse.leshan.core.LwM2mId.SECURITY;
 import static org.eclipse.leshan.core.LwM2mId.SERVER;
-import static org.eclipse.leshan.core.LwM2mId.SOFTWARE_MANAGEMENT;
 
 @Slf4j
 @Data
@@ -67,7 +65,7 @@ public class LwM2MTestClient {
     private LeshanClient client;
 
     public void init(Security security, NetworkConfig coapConfig) throws InvalidDDFFileException, IOException {
-        String[] resources = new String[]{"0.xml", "1.xml", "2.xml", "3.xml", "5.xml", "9.xml"};
+        String[] resources = new String[]{"0.xml", "1.xml", "2.xml", "3.xml"};
         List<ObjectModel> models = new ArrayList<>();
         for (String resourceName : resources) {
             models.addAll(ObjectLoader.loadDdfFile(LwM2MTestClient.class.getClassLoader().getResourceAsStream("lwm2m/" + resourceName), resourceName));
@@ -77,8 +75,6 @@ public class LwM2MTestClient {
         initializer.setInstancesForObject(SECURITY, security);
         initializer.setInstancesForObject(SERVER, new Server(123, 300));
         initializer.setInstancesForObject(DEVICE, new SimpleLwM2MDevice());
-        initializer.setInstancesForObject(FIRMWARE, new FwLwM2MDevice());
-        initializer.setInstancesForObject(SOFTWARE_MANAGEMENT, new SwLwM2MDevice());
         initializer.setClassForObject(LwM2mId.ACCESS_CONTROL, DummyInstanceEnabler.class);
 
         DtlsConnectorConfig.Builder dtlsConfig = new DtlsConnectorConfig.Builder();

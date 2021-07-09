@@ -27,26 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.thingsboard.server.common.data.Customer;
-import org.thingsboard.server.common.data.Dashboard;
-import org.thingsboard.server.common.data.DashboardInfo;
-import org.thingsboard.server.common.data.Device;
-import org.thingsboard.server.common.data.DeviceInfo;
-import org.thingsboard.server.common.data.DeviceProfile;
-import org.thingsboard.server.common.data.EdgeUtils;
-import org.thingsboard.server.common.data.EntityType;
-import org.thingsboard.server.common.data.EntityView;
-import org.thingsboard.server.common.data.EntityViewInfo;
-import org.thingsboard.server.common.data.OtaPackage;
-import org.thingsboard.server.common.data.OtaPackageInfo;
-import org.thingsboard.server.common.data.HasName;
-import org.thingsboard.server.common.data.HasTenantId;
-import org.thingsboard.server.common.data.TbResourceInfo;
-import org.thingsboard.server.common.data.TbResource;
-import org.thingsboard.server.common.data.Tenant;
-import org.thingsboard.server.common.data.TenantInfo;
-import org.thingsboard.server.common.data.TenantProfile;
-import org.thingsboard.server.common.data.User;
+import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.alarm.Alarm;
 import org.thingsboard.server.common.data.alarm.AlarmInfo;
 import org.thingsboard.server.common.data.asset.Asset;
@@ -58,26 +39,7 @@ import org.thingsboard.server.common.data.edge.EdgeEventType;
 import org.thingsboard.server.common.data.edge.EdgeInfo;
 import org.thingsboard.server.common.data.exception.ThingsboardErrorCode;
 import org.thingsboard.server.common.data.exception.ThingsboardException;
-import org.thingsboard.server.common.data.id.AlarmId;
-import org.thingsboard.server.common.data.id.AssetId;
-import org.thingsboard.server.common.data.id.CustomerId;
-import org.thingsboard.server.common.data.id.DashboardId;
-import org.thingsboard.server.common.data.id.DeviceId;
-import org.thingsboard.server.common.data.id.DeviceProfileId;
-import org.thingsboard.server.common.data.id.EdgeId;
-import org.thingsboard.server.common.data.id.EntityId;
-import org.thingsboard.server.common.data.id.EntityIdFactory;
-import org.thingsboard.server.common.data.id.EntityViewId;
-import org.thingsboard.server.common.data.id.OtaPackageId;
-import org.thingsboard.server.common.data.id.RpcId;
-import org.thingsboard.server.common.data.id.TbResourceId;
-import org.thingsboard.server.common.data.id.RuleChainId;
-import org.thingsboard.server.common.data.id.RuleNodeId;
-import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.id.TenantProfileId;
-import org.thingsboard.server.common.data.id.UserId;
-import org.thingsboard.server.common.data.id.WidgetTypeId;
-import org.thingsboard.server.common.data.id.WidgetsBundleId;
+import org.thingsboard.server.common.data.id.*;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.page.SortOrder;
 import org.thingsboard.server.common.data.page.TimePageLink;
@@ -96,7 +58,7 @@ import org.thingsboard.server.dao.audit.AuditLogService;
 import org.thingsboard.server.dao.customer.CustomerService;
 import org.thingsboard.server.dao.dashboard.DashboardService;
 import org.thingsboard.server.dao.device.ClaimDevicesService;
-import org.thingsboard.server.dao.device.DeviceCredentialsService;
+
 import org.thingsboard.server.dao.device.DeviceProfileService;
 import org.thingsboard.server.dao.device.DeviceService;
 import org.thingsboard.server.dao.edge.EdgeService;
@@ -113,11 +75,12 @@ import org.thingsboard.server.dao.rule.RuleChainService;
 import org.thingsboard.server.dao.tenant.TbTenantProfileCache;
 import org.thingsboard.server.dao.tenant.TenantProfileService;
 import org.thingsboard.server.dao.tenant.TenantService;
+import org.thingsboard.server.dao.test.TestService;
 import org.thingsboard.server.dao.user.UserService;
 import org.thingsboard.server.dao.widget.WidgetTypeService;
 import org.thingsboard.server.dao.widget.WidgetsBundleService;
 import org.thingsboard.server.exception.ThingsboardErrorResponseHandler;
-import org.thingsboard.server.gen.transport.TransportProtos;
+
 import org.thingsboard.server.queue.discovery.PartitionService;
 import org.thingsboard.server.queue.provider.TbQueueProducerProvider;
 import org.thingsboard.server.queue.util.TbCoreComponent;
@@ -188,8 +151,7 @@ public abstract class BaseController {
     @Autowired
     protected AlarmSubscriptionService alarmService;
 
-    @Autowired
-    protected DeviceCredentialsService deviceCredentialsService;
+
 
     @Autowired
     protected WidgetsBundleService widgetsBundleService;
@@ -223,6 +185,9 @@ public abstract class BaseController {
 
     @Autowired
     protected DeviceStateService deviceStateService;
+
+    @Autowired
+    protected TestService testService;
 
     @Autowired
     protected EntityViewService entityViewService;
@@ -492,6 +457,9 @@ public abstract class BaseController {
                 case DASHBOARD:
                     checkDashboardId(new DashboardId(entityId.getId()), operation);
                     return;
+                case TEST:
+                    checkTestId(new TestId(entityId.getId()), operation);
+                    return;
                 case USER:
                     checkUserId(new UserId(entityId.getId()), operation);
                     return;
@@ -664,6 +632,26 @@ public abstract class BaseController {
             throw handleException(e, false);
         }
     }
+    //new
+
+    
+    Test checkTestId(TestId testId, Operation operation) throws ThingsboardException {
+        try {
+            System.out.println("3");
+
+            validateId(testId, "Incorrect testId " + testId);
+            System.out.println("4");
+            Test test = testService.findTestById(getCurrentUser().getTenantId(), testId);
+            System.out.println("5");
+            System.out.println(test);
+            checkNotNull(test);
+            accessControlService.checkPermission(getCurrentUser(), Resource.TEST, operation, testId, test);
+            System.out.println("6");
+            return test;
+        } catch (Exception e) {
+            throw handleException(e, false);
+        }
+    }
 
     Edge checkEdgeId(EdgeId edgeId, Operation operation) throws ThingsboardException {
         try {
@@ -696,6 +684,19 @@ public abstract class BaseController {
             checkNotNull(dashboardInfo);
             accessControlService.checkPermission(getCurrentUser(), Resource.DASHBOARD, operation, dashboardId, dashboardInfo);
             return dashboardInfo;
+        } catch (Exception e) {
+            throw handleException(e, false);
+        }
+    }
+
+    //shtimi
+    TestInfo checkTestInfoId(TestId testId, Operation operation) throws ThingsboardException {
+        try {
+            validateId(testId, "Incorrect testId " + testId);
+            TestInfo testInfo = testService.findTestInfoById(getCurrentUser().getTenantId(), testId);
+            checkNotNull(testInfo);
+            accessControlService.checkPermission(getCurrentUser(), Resource.DASHBOARD, operation, testId, testInfo);
+            return testInfo;
         } catch (Exception e) {
             throw handleException(e, false);
         }
@@ -867,6 +868,7 @@ public abstract class BaseController {
     }
 
     protected void sendEntityNotificationMsg(TenantId tenantId, EntityId entityId, EdgeEventActionType action) {
+        System.out.println("printohu ti tpkt");
         sendNotificationMsgToEdgeService(tenantId, null, entityId, null, null, action);
     }
 
@@ -890,27 +892,7 @@ public abstract class BaseController {
                 return;
             }
         }
-        TransportProtos.EdgeNotificationMsgProto.Builder builder = TransportProtos.EdgeNotificationMsgProto.newBuilder();
-        builder.setTenantIdMSB(tenantId.getId().getMostSignificantBits());
-        builder.setTenantIdLSB(tenantId.getId().getLeastSignificantBits());
-        builder.setType(type.name());
-        builder.setAction(action.name());
-        if (entityId != null) {
-            builder.setEntityIdMSB(entityId.getId().getMostSignificantBits());
-            builder.setEntityIdLSB(entityId.getId().getLeastSignificantBits());
-            builder.setEntityType(entityId.getEntityType().name());
-        }
-        if (edgeId != null) {
-            builder.setEdgeIdMSB(edgeId.getId().getMostSignificantBits());
-            builder.setEdgeIdLSB(edgeId.getId().getLeastSignificantBits());
-        }
-        if (body != null) {
-            builder.setBody(body);
-        }
-        TransportProtos.EdgeNotificationMsgProto msg = builder.build();
-        log.trace("[{}] sending notification to edge service {}", tenantId.getId(), msg);
-        tbClusterService.pushMsgToCore(tenantId, entityId != null ? entityId : tenantId,
-                TransportProtos.ToCoreMsg.newBuilder().setEdgeNotificationMsg(msg).build(), null);
+
     }
 
     protected List<EdgeId> findRelatedEdgeIds(TenantId tenantId, EntityId entityId) {
@@ -930,6 +912,15 @@ public abstract class BaseController {
         String dashboardId = additionalInfo.has(requiredFields) ? additionalInfo.get(requiredFields).asText() : null;
         if (dashboardId != null && !dashboardId.equals("null")) {
             if (dashboardService.findDashboardById(getTenantId(), new DashboardId(UUID.fromString(dashboardId))) == null) {
+                additionalInfo.remove(requiredFields);
+            }
+        }
+    }
+    //new
+    protected void processTestIdFromAdditionalInfo(ObjectNode additionalInfo, String requiredFields) throws ThingsboardException {
+        String testId = additionalInfo.has(requiredFields) ? additionalInfo.get(requiredFields).asText() : null;
+        if (testId != null && !testId.equals("null")) {
+            if (dashboardService.findDashboardById(getTenantId(), new DashboardId(UUID.fromString(testId))) == null) {
                 additionalInfo.remove(requiredFields);
             }
         }

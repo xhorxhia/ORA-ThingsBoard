@@ -15,28 +15,18 @@
  */
 package org.thingsboard.server.transport.lwm2m.server.store;
 
-import org.thingsboard.server.transport.lwm2m.server.ota.firmware.LwM2MClientFwOtaInfo;
-import org.thingsboard.server.transport.lwm2m.server.ota.software.LwM2MClientSwOtaInfo;
+import org.thingsboard.server.common.data.ota.OtaPackageType;
+import org.thingsboard.server.transport.lwm2m.server.ota.LwM2MClientOtaInfo;
 
 public class TbDummyLwM2MClientOtaInfoStore implements TbLwM2MClientOtaInfoStore {
 
     @Override
-    public LwM2MClientFwOtaInfo getFw(String endpoint) {
+    public LwM2MClientOtaInfo get(OtaPackageType type, String endpoint) {
         return null;
     }
 
     @Override
-    public LwM2MClientSwOtaInfo getSw(String endpoint) {
-        return null;
-    }
-
-    @Override
-    public void putFw(LwM2MClientFwOtaInfo info) {
-
-    }
-
-    @Override
-    public void putSw(LwM2MClientSwOtaInfo info) {
+    public void put(LwM2MClientOtaInfo info) {
 
     }
 }

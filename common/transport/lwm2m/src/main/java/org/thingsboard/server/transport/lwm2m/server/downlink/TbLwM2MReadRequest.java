@@ -24,12 +24,12 @@ import org.thingsboard.server.transport.lwm2m.server.LwM2mOperationType;
 public class TbLwM2MReadRequest extends AbstractTbLwM2MTargetedDownlinkRequest<ReadResponse> implements HasContentFormat {
 
     @Getter
-    private final ContentFormat requestContentFormat;
+    private final ContentFormat contentFormat;
 
     @Builder
-    private TbLwM2MReadRequest(String versionedId, long timeout, ContentFormat requestContentFormat) {
+    private TbLwM2MReadRequest(String versionedId, long timeout, ContentFormat contentFormat) {
         super(versionedId, timeout);
-        this.requestContentFormat = requestContentFormat;
+        this.contentFormat = contentFormat;
     }
 
     @Override

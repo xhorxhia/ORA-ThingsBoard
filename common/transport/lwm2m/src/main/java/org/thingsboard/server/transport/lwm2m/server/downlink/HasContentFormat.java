@@ -19,9 +19,5 @@ import org.eclipse.leshan.core.request.ContentFormat;
 
 public interface HasContentFormat {
 
-    ContentFormat getRequestContentFormat();
-
-    default ContentFormat getResponseContentFormat() {
-        return null;
-    }
+    ContentFormat getContentFormat();
 }

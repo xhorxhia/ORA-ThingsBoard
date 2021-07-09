@@ -45,6 +45,7 @@ public class EntityIdFactory {
                 return new CustomerId(uuid);
             case USER:
                 return new UserId(uuid);
+
             case DASHBOARD:
                 return new DashboardId(uuid);
             case DEVICE:
@@ -77,6 +78,8 @@ public class EntityIdFactory {
                 return new EdgeId(uuid);
             case RPC:
                 return new RpcId(uuid);
+            case TEST:
+                return new TestId(uuid);
         }
         throw new IllegalArgumentException("EntityType " + type + " is not supported!");
     }
@@ -107,6 +110,9 @@ public class EntityIdFactory {
                 return new WidgetTypeId(uuid);
             case EDGE:
                 return new EdgeId(uuid);
+            case TEST:
+                return new TestId(uuid);
+
         }
         throw new IllegalArgumentException("EdgeEventType " + edgeEventType + " is not supported!");
     }

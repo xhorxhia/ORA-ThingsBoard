@@ -33,6 +33,7 @@ public class DefaultTenantProfileConfiguration implements TenantProfileConfigura
     private long maxCustomers;
     private long maxUsers;
     private long maxDashboards;
+    private long maxTests;
     private long maxRuleChains;
     private long maxResourcesInBytes;
     private long maxOtaPackagesInBytes;

@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.thingsboard.server.transport.lwm2m.server.rpc.composite;
+package org.thingsboard.server.common.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-
-@Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class RpcReadCompositeRequest {
-
-    private String [] keys;
-    private String [] ids;
-
+public enum TestProfileProvisionType {
+    DISABLED,
+    ALLOW_CREATE_NEW_DEVICES,
+    CHECK_PRE_PROVISIONED_DEVICES
 }

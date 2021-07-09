@@ -45,74 +45,74 @@ public class SimpleLwM2MDevice extends BaseInstanceEnabler implements Destroyabl
     );
 
     @Override
-    public ReadResponse read(ServerIdentity identity, int resourceId) {
+    public ReadResponse read(ServerIdentity identity, int resourceid) {
         if (!identity.isSystem())
-            log.info("Read on Device resource /{}/{}/{}", getModel().id, getId(), resourceId);
-        switch (resourceId) {
+            log.info("Read on Device resource /{}/{}/{}", getModel().id, getId(), resourceid);
+        switch (resourceid) {
             case 0:
-                return ReadResponse.success(resourceId, getManufacturer());
+                return ReadResponse.success(resourceid, getManufacturer());
             case 1:
-                return ReadResponse.success(resourceId, getModelNumber());
+                return ReadResponse.success(resourceid, getModelNumber());
             case 2:
-                return ReadResponse.success(resourceId, getSerialNumber());
+                return ReadResponse.success(resourceid, getSerialNumber());
             case 3:
-                return ReadResponse.success(resourceId, getFirmwareVersion());
+                return ReadResponse.success(resourceid, getFirmwareVersion());
             case 9:
-                return ReadResponse.success(resourceId, getBatteryLevel());
+                return ReadResponse.success(resourceid, getBatteryLevel());
             case 10:
-                return ReadResponse.success(resourceId, getMemoryFree());
+                return ReadResponse.success(resourceid, getMemoryFree());
             case 11:
                 Map<Integer, Long> errorCodes = new HashMap<>();
                 errorCodes.put(0, getErrorCode());
-                return ReadResponse.success(resourceId, errorCodes, ResourceModel.Type.INTEGER);
+                return ReadResponse.success(resourceid, errorCodes, ResourceModel.Type.INTEGER);
             case 14:
-                return ReadResponse.success(resourceId, getUtcOffset());
+                return ReadResponse.success(resourceid, getUtcOffset());
             case 15:
-                return ReadResponse.success(resourceId, getTimezone());
+                return ReadResponse.success(resourceid, getTimezone());
             case 16:
-                return ReadResponse.success(resourceId, getSupportedBinding());
+                return ReadResponse.success(resourceid, getSupportedBinding());
             case 17:
-                return ReadResponse.success(resourceId, getDeviceType());
+                return ReadResponse.success(resourceid, getDeviceType());
             case 18:
-                return ReadResponse.success(resourceId, getHardwareVersion());
+                return ReadResponse.success(resourceid, getHardwareVersion());
             case 19:
-                return ReadResponse.success(resourceId, getSoftwareVersion());
+                return ReadResponse.success(resourceid, getSoftwareVersion());
             case 20:
-                return ReadResponse.success(resourceId, getBatteryStatus());
+                return ReadResponse.success(resourceid, getBatteryStatus());
             case 21:
-                return ReadResponse.success(resourceId, getMemoryTotal());
+                return ReadResponse.success(resourceid, getMemoryTotal());
             default:
-                return super.read(identity, resourceId);
+                return super.read(identity, resourceid);
         }
     }
 
     @Override
-    public ExecuteResponse execute(ServerIdentity identity, int resourceId, String params) {
+    public ExecuteResponse execute(ServerIdentity identity, int resourceid, String params) {
         String withParams = null;
         if (params != null && params.length() != 0) {
             withParams = " with params " + params;
         }
-        log.info("Execute on Device resource /{}/{}/{} {}", getModel().id, getId(), resourceId, withParams != null ? withParams : "");
+        log.info("Execute on Device resource /{}/{}/{} {}", getModel().id, getId(), resourceid, withParams != null ? withParams : "");
         return ExecuteResponse.success();
     }
 
     @Override
-    public WriteResponse write(ServerIdentity identity, boolean replace, int resourceId, LwM2mResource value) {
-        log.info("Write on Device resource /{}/{}/{}", getModel().id, getId(), resourceId);
+    public WriteResponse write(ServerIdentity identity, boolean replace, int resourceid, LwM2mResource value) {
+        log.info("Write on Device resource /{}/{}/{}", getModel().id, getId(), resourceid);
 
-        switch (resourceId) {
+        switch (resourceid) {
             case 13:
                 return WriteResponse.notFound();
             case 14:
                 setUtcOffset((String) value.getValue());
-                fireResourcesChange(resourceId);
+                fireResourcesChange(resourceid);
                 return WriteResponse.success();
             case 15:
                 setTimezone((String) value.getValue());
-                fireResourcesChange(resourceId);
+                fireResourcesChange(resourceid);
                 return WriteResponse.success();
             default:
-                return super.write(identity, replace, resourceId, value);
+                return super.write(identity, replace, resourceid, value);
         }
     }
 

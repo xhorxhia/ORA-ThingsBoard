@@ -24,6 +24,13 @@ import java.util.UUID;
 
 public class ModelConstants {
 
+
+    public static final String TEST_ACCIDENT_TYPE_PROPERTY ="accident_type" ;
+    public static final String TEST_ROAD_PROPERTY = "road";
+    public  static final String TEST_NR_OF_VEHICLES_PROPERTY="nr_of_vehicles";
+    public static final String TEST_DESCRIPTION_PROPERTY = "description";
+
+
     private ModelConstants() {
     }
 
@@ -178,6 +185,7 @@ public class ModelConstants {
     public static final String DEVICE_PROFILE_IS_DEFAULT_PROPERTY = "is_default";
     public static final String DEVICE_PROFILE_DEFAULT_RULE_CHAIN_ID_PROPERTY = "default_rule_chain_id";
     public static final String DEVICE_PROFILE_DEFAULT_DASHBOARD_ID_PROPERTY = "default_dashboard_id";
+    public static final String DEVICE_PROFILE_DEFAULT_TEST_ID_PROPERTY = "default_test_id";
     public static final String DEVICE_PROFILE_DEFAULT_QUEUE_NAME_PROPERTY = "default_queue_name";
     public static final String DEVICE_PROFILE_PROVISION_DEVICE_KEY = "provision_device_key";
     public static final String DEVICE_PROFILE_FIRMWARE_ID_PROPERTY = "firmware_id";
@@ -345,6 +353,21 @@ public class ModelConstants {
     /**
      * Cassandra plugin component metadata constants.
      */
+    /**
+     * Cassandra dashboard constants.
+     */
+    public static final String TEST_COLUMN_FAMILY_NAME = "test";
+    public static final String TEST_TENANT_ID_PROPERTY = TENANT_ID_PROPERTY;
+    public static final String TEST_TITLE_PROPERTY = TITLE_PROPERTY;
+    public static final String TEST_IMAGE_PROPERTY = "image";
+    public static final String TEST_CONFIGURATION_PROPERTY = "configuration";
+    public static final String TEST_ASSIGNED_CUSTOMERS_PROPERTY = "assigned_customers";
+
+    public static final String TEST_BY_TENANT_AND_SEARCH_TEXT_COLUMN_FAMILY_NAME = "test_by_tenant_and_search_text";
+
+    /**
+     * Cassandra plugin component metadata constants.
+     */
     public static final String COMPONENT_DESCRIPTOR_COLUMN_FAMILY_NAME = "component_descriptor";
     public static final String COMPONENT_DESCRIPTOR_TYPE_PROPERTY = "type";
     public static final String COMPONENT_DESCRIPTOR_SCOPE_PROPERTY = "scope";
@@ -450,6 +473,7 @@ public class ModelConstants {
     public static final String OAUTH2_TENANT_NAME_PATTERN_PROPERTY = "basic_tenant_name_pattern";
     public static final String OAUTH2_CUSTOMER_NAME_PATTERN_PROPERTY = "basic_customer_name_pattern";
     public static final String OAUTH2_DEFAULT_DASHBOARD_NAME_PROPERTY = "basic_default_dashboard_name";
+    public static final String OAUTH2_DEFAULT_TEST_NAME_PROPERTY = "basic_default_test_name";
     public static final String OAUTH2_ALWAYS_FULL_SCREEN_PROPERTY = "basic_always_full_screen";
     public static final String OAUTH2_MAPPER_URL_PROPERTY = "custom_url";
     public static final String OAUTH2_MAPPER_USERNAME_PROPERTY = "custom_username";

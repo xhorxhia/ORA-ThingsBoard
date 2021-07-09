@@ -75,7 +75,8 @@ public class ThingsboardSecurityConfiguration extends WebSecurityConfigurerAdapt
     public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**";
     public static final String WS_TOKEN_BASED_AUTH_ENTRY_POINT = "/api/ws/**";
 
-    @Autowired private ThingsboardErrorResponseHandler restAccessDeniedHandler;
+    @Autowired
+    private ThingsboardErrorResponseHandler restAccessDeniedHandler;
 
     @Autowired(required = false)
     @Qualifier("oauth2AuthenticationSuccessHandler")
@@ -178,6 +179,7 @@ public class ThingsboardSecurityConfiguration extends WebSecurityConfigurerAdapt
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/*.js","/*.css","/*.ico","/assets/**","/static/**");
+
     }
 
     @Autowired
@@ -241,7 +243,7 @@ public class ThingsboardSecurityConfiguration extends WebSecurityConfigurerAdapt
     }
 
     @Bean
-    public AuditLogLevelFilter auditLogLevelFilter(@Autowired AuditLogLevelProperties auditLogLevelProperties) {
-        return new AuditLogLevelFilter(auditLogLevelProperties.getMask());
+    public AuditLogLevelFilter auditLogLevelFilter(@Autowired AuditLogLevelProperties auditLogLevelPropertie) {
+        return new AuditLogLevelFilter(auditLogLevelPropertie.getMask());
     }
 }

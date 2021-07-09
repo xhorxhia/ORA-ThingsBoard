@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.thingsboard.server.transport.lwm2m.server.rpc.composite;
+package org.thingsboard.server.dao.sql.test;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
+import org.springframework.data.repository.CrudRepository;
+import org.thingsboard.server.dao.model.sql.TestEntity;
 
-import java.util.Map;
+import java.util.UUID;
 
-@Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class RpcWriteCompositeRequest {
+/**
+ * Created by Valerii Sosliuk on 5/6/2017.
+ */
+public interface TestRepository extends CrudRepository<TestEntity, UUID> {
 
-    private Map<String, Object> nodes;
-
+    Long countByTenantId(UUID tenantId);
 }

@@ -141,6 +141,19 @@ CREATE TABLE IF NOT EXISTS dashboard (
     image varchar(1000000)
 );
 
+CREATE TABLE IF NOT EXISTS test (
+    id uuid NOT NULL CONSTRAINT test_pkey PRIMARY KEY,
+    created_time bigint NOT NULL,
+    configuration varchar,
+    assigned_customers varchar(1000000),
+    search_text varchar(255),
+    tenant_id uuid,
+    title varchar(255),
+    road varchar(255),
+    accidentType varchar(255),
+    nrOfVehicles varchar(255),
+);
+
 CREATE TABLE IF NOT EXISTS rule_chain (
     id uuid NOT NULL CONSTRAINT rule_chain_pkey PRIMARY KEY,
     created_time bigint NOT NULL,

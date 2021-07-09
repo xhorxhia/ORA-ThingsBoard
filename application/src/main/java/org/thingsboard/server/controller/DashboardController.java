@@ -117,10 +117,12 @@ public class DashboardController extends BaseController {
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST)
     @ResponseBody
     public Dashboard saveDashboard(@RequestBody Dashboard dashboard) throws ThingsboardException {
+        System.out.println("ktuuuiii1111");
         try {
             dashboard.setTenantId(getCurrentUser().getTenantId());
 
             checkEntity(dashboard.getId(), dashboard, Resource.DASHBOARD);
+            System.out.println("ktuuuiii1112222221");
 
             Dashboard savedDashboard = checkNotNull(dashboardService.saveDashboard(dashboard));
 

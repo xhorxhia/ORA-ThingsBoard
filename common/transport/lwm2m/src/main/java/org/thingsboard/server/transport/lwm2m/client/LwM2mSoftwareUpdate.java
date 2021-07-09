@@ -13,23 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.thingsboard.server.transport.lwm2m.server.downlink;
+package org.thingsboard.server.transport.lwm2m.client;
 
-import org.thingsboard.server.transport.lwm2m.server.LwM2mTransportUtil;
+import lombok.Data;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.UUID;
 
-public interface HasVersionedIds {
-
-    String[] getVersionedIds();
-
-    default String[] getObjectIds() {
-        Set objectIds = ConcurrentHashMap.newKeySet();
-        for (String versionedId : getVersionedIds()) {
-            objectIds.add(LwM2mTransportUtil.fromVersionedIdToObjectId(versionedId));
-        }
-        return (String[]) objectIds.toArray(String[]::new);
-    }
-
+@Data
+public class LwM2mSoftwareUpdate {
+    private volatile String clientSwVersion;
+    private volatile String currentSwVersion;
+    private volatile UUID currentSwId;
 }

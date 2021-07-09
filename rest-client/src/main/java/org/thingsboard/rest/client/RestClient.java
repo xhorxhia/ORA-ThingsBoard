@@ -40,30 +40,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.thingsboard.common.util.ThingsBoardExecutors;
 import org.thingsboard.rest.client.utils.RestJsonConverter;
-import org.thingsboard.server.common.data.AdminSettings;
-import org.thingsboard.server.common.data.ClaimRequest;
-import org.thingsboard.server.common.data.Customer;
-import org.thingsboard.server.common.data.Dashboard;
-import org.thingsboard.server.common.data.DashboardInfo;
-import org.thingsboard.server.common.data.Device;
-import org.thingsboard.server.common.data.DeviceInfo;
-import org.thingsboard.server.common.data.DeviceProfile;
-import org.thingsboard.server.common.data.DeviceProfileInfo;
-import org.thingsboard.server.common.data.DeviceTransportType;
-import org.thingsboard.server.common.data.EntityInfo;
-import org.thingsboard.server.common.data.EntitySubtype;
-import org.thingsboard.server.common.data.EntityView;
-import org.thingsboard.server.common.data.EntityViewInfo;
-import org.thingsboard.server.common.data.Event;
-import org.thingsboard.server.common.data.OtaPackage;
-import org.thingsboard.server.common.data.OtaPackageInfo;
-import org.thingsboard.server.common.data.TbResource;
-import org.thingsboard.server.common.data.TbResourceInfo;
-import org.thingsboard.server.common.data.Tenant;
-import org.thingsboard.server.common.data.TenantInfo;
-import org.thingsboard.server.common.data.TenantProfile;
-import org.thingsboard.server.common.data.UpdateMessage;
-import org.thingsboard.server.common.data.User;
+import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.alarm.Alarm;
 import org.thingsboard.server.common.data.alarm.AlarmInfo;
 import org.thingsboard.server.common.data.alarm.AlarmSearchStatus;
@@ -79,25 +56,7 @@ import org.thingsboard.server.common.data.edge.Edge;
 import org.thingsboard.server.common.data.edge.EdgeEvent;
 import org.thingsboard.server.common.data.edge.EdgeSearchQuery;
 import org.thingsboard.server.common.data.entityview.EntityViewSearchQuery;
-import org.thingsboard.server.common.data.id.AlarmId;
-import org.thingsboard.server.common.data.id.AssetId;
-import org.thingsboard.server.common.data.id.CustomerId;
-import org.thingsboard.server.common.data.id.DashboardId;
-import org.thingsboard.server.common.data.id.DeviceId;
-import org.thingsboard.server.common.data.id.DeviceProfileId;
-import org.thingsboard.server.common.data.id.EdgeId;
-import org.thingsboard.server.common.data.id.EntityId;
-import org.thingsboard.server.common.data.id.EntityViewId;
-import org.thingsboard.server.common.data.id.OAuth2ClientRegistrationTemplateId;
-import org.thingsboard.server.common.data.id.OtaPackageId;
-import org.thingsboard.server.common.data.id.RuleChainId;
-import org.thingsboard.server.common.data.id.RuleNodeId;
-import org.thingsboard.server.common.data.id.TbResourceId;
-import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.id.TenantProfileId;
-import org.thingsboard.server.common.data.id.UserId;
-import org.thingsboard.server.common.data.id.WidgetTypeId;
-import org.thingsboard.server.common.data.id.WidgetsBundleId;
+import org.thingsboard.server.common.data.id.*;
 import org.thingsboard.server.common.data.kv.Aggregation;
 import org.thingsboard.server.common.data.kv.AttributeKvEntry;
 import org.thingsboard.server.common.data.kv.TsKvEntry;
@@ -853,7 +812,7 @@ public class RestClient implements ClientHttpRequestInterceptor, Closeable {
     public Long getMaxDatapointsLimit() {
         return restTemplate.getForObject(baseURL + "/api/dashboard/maxDatapointsLimit", Long.class);
     }
-
+    //ketu fillon
     public Optional<DashboardInfo> getDashboardInfoById(DashboardId dashboardId) {
         try {
             ResponseEntity<DashboardInfo> dashboardInfo = restTemplate.getForEntity(baseURL + "/api/dashboard/info/{dashboardId}", DashboardInfo.class, dashboardId.getId());
@@ -1034,6 +993,223 @@ public class RestClient implements ClientHttpRequestInterceptor, Closeable {
             }
         }
     }
+    //ketu mbaron
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //ketu fillon
+    public Optional<TestInfo> getTestInfoById(TestId testId) {
+        try {
+            ResponseEntity<TestInfo> testInfo = restTemplate.getForEntity(baseURL + "/api/test/info/{testId}", TestInfo.class, testId.getId());
+            return Optional.ofNullable(testInfo.getBody());
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return Optional.empty();
+            } else {
+                throw exception;
+            }
+        }
+    }
+
+    public Optional<Test> getTestById(TestId testId) {
+        try {
+            ResponseEntity<Test> test = restTemplate.getForEntity(baseURL + "/api/test/{testId}", Test.class, testId.getId());
+            return Optional.ofNullable(test.getBody());
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return Optional.empty();
+            } else {
+                throw exception;
+            }
+        }
+    }
+
+    public Test saveTest(Test test) {
+        System.out.println("po ktu kemi pun");
+        return restTemplate.postForEntity(baseURL + "/api/test", test, Test.class).getBody();
+    }
+
+    public void deleteTest(TestId testId) {
+        restTemplate.delete(baseURL + "/api/test/{testId}", testId.getId());
+    }
+
+    public Optional<Test> assignTestToCustomer(CustomerId customerId, TestId testId) {
+        try {
+            ResponseEntity<Test> test = restTemplate.postForEntity(baseURL + "/api/customer/{customerId}/test/{testId}", null, Test.class, customerId.getId(), testId.getId());
+            return Optional.ofNullable(test.getBody());
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return Optional.empty();
+            } else {
+                throw exception;
+            }
+        }
+    }
+
+    public Optional<Test> unassignTestFromCustomer(CustomerId customerId, TestId testId) {
+        try {
+            ResponseEntity<Test> test = restTemplate.exchange(baseURL + "/api/customer/{customerId}/test/{testId}", HttpMethod.DELETE, HttpEntity.EMPTY, Test.class, customerId.getId(), testId.getId());
+            return Optional.ofNullable(test.getBody());
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return Optional.empty();
+            } else {
+                throw exception;
+            }
+        }
+    }
+
+    public Optional<Test> updateTestCustomers(TestId testId, List<CustomerId> customerIds) {
+        Object[] customerIdArray = customerIds.stream().map(customerId -> customerId.getId().toString()).toArray();
+        try {
+            ResponseEntity<Test> test = restTemplate.postForEntity(baseURL + "/api/test/{testId}/customers", customerIdArray, Test.class, testId.getId());
+            return Optional.ofNullable(test.getBody());
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return Optional.empty();
+            } else {
+                throw exception;
+            }
+        }
+    }
+
+    public Optional<Test> addTestCustomers(TestId testId, List<CustomerId> customerIds) {
+        Object[] customerIdArray = customerIds.stream().map(customerId -> customerId.getId().toString()).toArray();
+        try {
+            ResponseEntity<Test> test = restTemplate.postForEntity(baseURL + "/api/test/{testId}/customers/add", customerIdArray, Test.class, testId.getId());
+            return Optional.ofNullable(test.getBody());
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return Optional.empty();
+            } else {
+                throw exception;
+            }
+        }
+    }
+
+    public Optional<Test> removeTestCustomers(TestId testId, List<CustomerId> customerIds) {
+        Object[] customerIdArray = customerIds.stream().map(customerId -> customerId.getId().toString()).toArray();
+        try {
+            ResponseEntity<Test> test = restTemplate.postForEntity(baseURL + "/api/test/{testId}/customers/remove", customerIdArray, Test.class, testId.getId());
+            return Optional.ofNullable(test.getBody());
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return Optional.empty();
+            } else {
+                throw exception;
+            }
+        }
+    }
+
+    public Optional<Test> assignTestToPublicCustomer(TestId testId) {
+        try {
+            ResponseEntity<Test> test = restTemplate.postForEntity(baseURL + "/api/customer/public/test/{testId}", null, Test.class, testId.getId());
+            return Optional.ofNullable(test.getBody());
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return Optional.empty();
+            } else {
+                throw exception;
+            }
+        }
+    }
+
+    public Optional<Test> unassignTestFromPublicCustomer(TestId testId) {
+        try {
+            ResponseEntity<Test> test = restTemplate.exchange(baseURL + "/api/customer/public/test/{testId}", HttpMethod.DELETE, HttpEntity.EMPTY, Test.class, testId.getId());
+            return Optional.ofNullable(test.getBody());
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return Optional.empty();
+            } else {
+                throw exception;
+            }
+        }
+    }
+
+    public PageData<TestInfo> getTenantTests(TenantId tenantId, PageLink pageLink) {
+        Map<String, String> params = new HashMap<>();
+        params.put("tenantId", tenantId.getId().toString());
+        addPageLinkToParam(params, pageLink);
+        return restTemplate.exchange(
+                baseURL + "/api/tenant/{tenantId}/tests?" + getUrlParams(pageLink),
+                HttpMethod.GET, HttpEntity.EMPTY,
+                new ParameterizedTypeReference<PageData<TestInfo>>() {
+                }, params).getBody();
+    }
+
+    public PageData<TestInfo> getTenantTests(PageLink pageLink) {
+        Map<String, String> params = new HashMap<>();
+        addPageLinkToParam(params, pageLink);
+        return restTemplate.exchange(
+                baseURL + "/api/tenant/tests?" + getUrlParams(pageLink),
+                HttpMethod.GET, HttpEntity.EMPTY,
+                new ParameterizedTypeReference<PageData<TestInfo>>() {
+                }, params).getBody();
+    }
+
+    public PageData<TestInfo> getCustomerTests(CustomerId customerId, PageLink pageLink) {
+        Map<String, String> params = new HashMap<>();
+        params.put("customerId", customerId.getId().toString());
+        addPageLinkToParam(params, pageLink);
+        return restTemplate.exchange(
+                baseURL + "/api/customer/{customerId}/tests?" + getUrlParams(pageLink),
+                HttpMethod.GET, HttpEntity.EMPTY,
+                new ParameterizedTypeReference<PageData<TestInfo>>() {
+                }, params).getBody();
+    }
+
+    @Deprecated
+    public Test createTest(Test test) {
+        return restTemplate.postForEntity(baseURL + "/api/test", test, Test.class).getBody();
+    }
+
+    @Deprecated
+    public List<TestInfo> findTenantTests() {
+        try {
+            ResponseEntity<PageData<TestInfo>> tests =
+                    restTemplate.exchange(baseURL + "/api/tenant/tests?pageSize=100000", HttpMethod.GET, null, new ParameterizedTypeReference<PageData<TestInfo>>() {
+                    });
+            return tests.getBody().getData();
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return Collections.emptyList();
+            } else {
+                throw exception;
+            }
+        }
+    }
+    //ketu mbaron
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public Optional<Device> getDeviceById(DeviceId deviceId) {
         try {

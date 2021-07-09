@@ -27,8 +27,12 @@ public interface LwM2MSecureServerConfig {
 
     Integer getSecurePort();
 
-    String getCertificateAlias();
+    String getPublicX();
 
-    String getCertificatePassword();
+    String getPublicY();
+
+    String getPrivateEncoded();
+
+    String getCertificateAlias();
 
 }

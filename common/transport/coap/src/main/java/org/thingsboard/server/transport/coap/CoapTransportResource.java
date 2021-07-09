@@ -223,14 +223,18 @@ public class CoapTransportResource extends AbstractCoapTransportResource {
         Request request = advanced.getRequest();
 
         String dtlsSessionIdStr = request.getSourceContext().get(DTLS_SESSION_ID_KEY);
-        if (dtlsSessionIdMap != null && StringUtils.isNotEmpty(dtlsSessionIdStr)) {
-            TbCoapDtlsSessionInfo tbCoapDtlsSessionInfo = dtlsSessionIdMap
-                    .computeIfPresent(dtlsSessionIdStr, (dtlsSessionId, dtlsSessionInfo) -> {
-                        dtlsSessionInfo.setLastActivityTime(System.currentTimeMillis());
-                        return dtlsSessionInfo;
-                    });
-            if (tbCoapDtlsSessionInfo != null) {
-                processRequest(exchange, type, request, tbCoapDtlsSessionInfo.getSessionInfoProto(), tbCoapDtlsSessionInfo.getDeviceProfile());
+        if (StringUtils.isNotEmpty(dtlsSessionIdStr)) {
+            if (dtlsSessionIdMap != null) {
+                TbCoapDtlsSessionInfo tbCoapDtlsSessionInfo = dtlsSessionIdMap
+                        .computeIfPresent(dtlsSessionIdStr, (dtlsSessionId, dtlsSessionInfo) -> {
+                            dtlsSessionInfo.setLastActivityTime(System.currentTimeMillis());
+                            return dtlsSessionInfo;
+                        });
+                if (tbCoapDtlsSessionInfo != null) {
+                    processRequest(exchange, type, request, tbCoapDtlsSessionInfo.getSessionInfoProto(), tbCoapDtlsSessionInfo.getDeviceProfile());
+                } else {
+                    exchange.respond(CoAP.ResponseCode.UNAUTHORIZED);
+                }
             } else {
                 processAccessTokenRequest(exchange, type, request);
             }

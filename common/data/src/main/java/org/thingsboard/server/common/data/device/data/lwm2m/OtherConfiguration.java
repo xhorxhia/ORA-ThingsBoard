@@ -15,12 +15,10 @@
  */
 package org.thingsboard.server.common.data.device.data.lwm2m;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.thingsboard.server.common.data.device.data.PowerMode;
 
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class OtherConfiguration {
 
     private Integer fwUpdateStrategy;
@@ -29,6 +27,5 @@ public class OtherConfiguration {
     private PowerMode powerMode;
     private String fwUpdateResource;
     private String swUpdateResource;
-    private boolean compositeOperationsSupport;
 
 }

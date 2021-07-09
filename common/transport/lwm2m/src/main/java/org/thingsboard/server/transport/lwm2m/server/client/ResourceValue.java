@@ -21,7 +21,6 @@ import org.eclipse.leshan.core.node.LwM2mResource;
 import org.eclipse.leshan.core.node.LwM2mResourceInstance;
 
 import java.io.Serializable;
-import java.util.stream.Collectors;
 
 @Data
 public class ResourceValue implements Serializable {
@@ -46,14 +45,9 @@ public class ResourceValue implements Serializable {
 
     private static TbLwM2MResource toTbLwM2MResource(LwM2mResource lwM2mResource) {
         if (lwM2mResource.isMultiInstances()) {
-            if ( lwM2mResource.getInstances().values().size() > 0) {
-                TbLwM2MResourceInstance [] instances =  lwM2mResource.getInstances().values().stream().map(ResourceValue::toTbLwM2MResourceInstance).collect(Collectors.toSet()).toArray(new TbLwM2MResourceInstance[0]);
-                return new TbLwM2MMultipleResource(lwM2mResource.getId(), lwM2mResource.getType(), instances);
-            }
-            else {
-                return new TbLwM2MMultipleResource(lwM2mResource.getId(), lwM2mResource.getType(), new TbLwM2MResourceInstance[0]);
-            }
-        } else  {
+            TbLwM2MResourceInstance[] instances = (TbLwM2MResourceInstance[]) lwM2mResource.getInstances().values().stream().map(ResourceValue::toTbLwM2MResourceInstance).toArray();
+            return new TbLwM2MMultipleResource(lwM2mResource.getId(), lwM2mResource.getType(), instances);
+        } else {
             return new TbLwM2MSingleResource(lwM2mResource.getId(), lwM2mResource.getValue(), lwM2mResource.getType());
         }
     }

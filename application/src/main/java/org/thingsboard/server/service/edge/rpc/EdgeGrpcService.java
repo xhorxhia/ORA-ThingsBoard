@@ -28,7 +28,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.thingsboard.common.util.ThingsBoardThreadFactory;
 import org.thingsboard.server.common.data.DataConstants;
-import org.thingsboard.server.common.data.ResourceUtils;
 import org.thingsboard.server.common.data.Tenant;
 import org.thingsboard.server.common.data.edge.Edge;
 import org.thingsboard.server.common.data.id.EdgeId;
@@ -49,7 +48,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -105,9 +103,9 @@ public class EdgeGrpcService extends EdgeRpcServiceGrpc.EdgeRpcServiceImplBase i
                 .addService(this);
         if (sslEnabled) {
             try {
-                InputStream certFileIs = ResourceUtils.getInputStream(this, certFileResource);
-                InputStream privateKeyFileIs = ResourceUtils.getInputStream(this, privateKeyResource);
-                builder.useTransportSecurity(certFileIs, privateKeyFileIs);
+                File certFile = new File(Resources.getResource(certFileResource).toURI());
+                File privateKeyFile = new File(Resources.getResource(privateKeyResource).toURI());
+                builder.useTransportSecurity(certFile, privateKeyFile);
             } catch (Exception e) {
                 log.error("Unable to set up SSL context. Reason: " + e.getMessage(), e);
                 throw new RuntimeException("Unable to set up SSL context!", e);

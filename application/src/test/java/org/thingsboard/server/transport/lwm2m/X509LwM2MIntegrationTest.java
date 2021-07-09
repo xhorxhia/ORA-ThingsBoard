@@ -16,7 +16,6 @@
 package org.thingsboard.server.transport.lwm2m;
 
 import org.eclipse.leshan.client.object.Security;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.thingsboard.server.common.data.device.credentials.lwm2m.X509ClientCredentials;
 import org.thingsboard.server.common.transport.util.SslUtil;
@@ -37,7 +36,6 @@ public class X509LwM2MIntegrationTest extends AbstractLwM2MIntegrationTest {
         super.basicTestConnectionObserveTelemetry(security, credentials, SECURE_COAP_CONFIG, ENDPOINT);
     }
 
-    @Ignore //See LwM2mClientContextImpl.unregister
     @Test
     public void testConnectWithCertAndObserveTelemetry() throws Exception {
         X509ClientCredentials credentials = new X509ClientCredentials();

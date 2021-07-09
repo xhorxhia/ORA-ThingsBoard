@@ -19,6 +19,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -62,6 +63,7 @@ import org.thingsboard.server.common.data.security.DeviceCredentials;
 import org.thingsboard.server.common.msg.TbMsg;
 import org.thingsboard.server.common.msg.TbMsgDataType;
 import org.thingsboard.server.common.msg.TbMsgMetaData;
+import org.thingsboard.server.dao.device.DeviceCredentialsService;
 import org.thingsboard.server.dao.device.claim.ClaimResponse;
 import org.thingsboard.server.dao.device.claim.ClaimResult;
 import org.thingsboard.server.dao.device.claim.ReclaimResult;
@@ -85,7 +87,8 @@ import static org.thingsboard.server.controller.EdgeController.EDGE_ID;
 @TbCoreComponent
 @RequestMapping("/api")
 public class DeviceController extends BaseController {
-
+    @Autowired
+    DeviceCredentialsService deviceCredentialsService;
     private static final String DEVICE_ID = "deviceId";
     private static final String DEVICE_NAME = "deviceName";
     private static final String TENANT_ID = "tenantId";
@@ -122,6 +125,7 @@ public class DeviceController extends BaseController {
     public Device saveDevice(@RequestBody Device device,
                              @RequestParam(name = "accessToken", required = false) String accessToken) throws ThingsboardException {
         boolean created = device.getId() == null;
+        System.out.println("jashaaa beni");
         try {
             device.setTenantId(getCurrentUser().getTenantId());
 
