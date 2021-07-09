@@ -17,21 +17,23 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '@shared/shared.module';
-import { TestRoutingModule } from './test-routing.module';
 import { HomeDialogsModule } from '../../dialogs/home-dialogs.module';
-import { HomeComponentsModule } from '@home/components/home-components.module';
-import {TestComponent} from "@home/pages/test/test.component";
-import {TestTableHeaderComponent} from "@home/pages/test/test-table-header.component";
+import { HomeComponentsModule } from '@modules/home/components/home-components.module';
+
+import {TestRoutingModule} from "@home/pages/test/test-routing.module";
 import {TestTabsComponent} from "@home/pages/test/test-tabs.component";
-//import {TestCredentialsDialogComponent} from "@home/pages/test/test-credentials-dialog.component";
-
-
+import {TestTableHeaderComponent} from "@home/pages/test/test-table-header.component";
+import {TestCredentialsDialogComponent} from "@home/pages/test/test-credentials-dialog.component";
+import {TestComponent} from "@home/pages/test/test.component";
 
 @NgModule({
   declarations: [
+
+
     TestComponent,
-    TestTableHeaderComponent,
     TestTabsComponent,
+    TestTableHeaderComponent,
+    TestCredentialsDialogComponent
   ],
   imports: [
     CommonModule,

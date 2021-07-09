@@ -268,9 +268,9 @@ export class MenuService {
       },
       {
         id: guid(),
-        name: 'tests',
+        name: 'test.test',
         type: 'link',
-        path: '/tests',
+        path: '/test',
         icon: 'devices_other'
       },
       {

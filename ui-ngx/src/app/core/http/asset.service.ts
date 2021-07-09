@@ -52,6 +52,7 @@ export class AssetService {
   }
 
   public getAssetInfo(assetId: string, config?: RequestConfig): Observable<AssetInfo> {
+    console.log(assetId)
     return this.http.get<AssetInfo>(`/api/asset/info/${assetId}`, defaultHttpOptionsFromConfig(config));
   }
 

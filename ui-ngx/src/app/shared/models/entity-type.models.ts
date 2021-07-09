@@ -23,11 +23,10 @@ export enum EntityType {
   CUSTOMER = 'CUSTOMER',
   USER = 'USER',
   DASHBOARD = 'DASHBOARD',
-  ASSET = 'ASSET',
-  DEVICE = 'DEVICE',
-
   TEST = 'TEST',
 
+  ASSET = 'ASSET',
+  DEVICE = 'DEVICE',
   DEVICE_PROFILE = 'DEVICE_PROFILE',
   ALARM = 'ALARM',
   RULE_CHAIN = 'RULE_CHAIN',
@@ -38,7 +37,8 @@ export enum EntityType {
   WIDGET_TYPE = 'WIDGET_TYPE',
   API_USAGE_STATE = 'API_USAGE_STATE',
   TB_RESOURCE = 'TB_RESOURCE',
-  OTA_PACKAGE = 'OTA_PACKAGE'
+  OTA_PACKAGE = 'OTA_PACKAGE',
+  TEST_PROFILE='TEST_PROFILE',
 }
 
 export enum AliasEntityType {
@@ -137,22 +137,20 @@ export const entityTypeTranslations = new Map<EntityType | AliasEntityType, Enti
         selectedEntities: 'device.selected-devices'
       }
     ],
-
     [
       EntityType.TEST,
       {
-        type: 'entity.type-device',
-        typePlural: 'entity.type-devices',
-        list: 'entity.list-of-devices',
-        nameStartsWith: 'entity.device-name-starts-with',
-        details: 'device.device-details',
-        add: 'device.add',
-        noEntities: 'device.no-devices-text',
+        type: 'entity.type-test',
+        typePlural: 'entity.type-test',
+        list: 'entity.list-of-test',
+        nameStartsWith: 'entity.test-name-starts-with',
+        details: 'test.test-details',
+        add: 'test.add',
+        noEntities: 'test.no-devices-text',
         search: 'test.search',
-        selectedEntities: 'device.selected-devices'
+        selectedEntities: 'test.selected-devices'
       }
     ],
-
     [
       EntityType.DEVICE_PROFILE,
       {
@@ -246,6 +244,7 @@ export const entityTypeTranslations = new Map<EntityType | AliasEntityType, Enti
         selectedEntities: 'dashboard.selected-dashboards'
       }
     ],
+
     [
       EntityType.ALARM,
       {
@@ -360,14 +359,6 @@ export const entityTypeResources = new Map<EntityType, EntityTypeResource<BaseDa
         helpLinkId: 'devices'
       }
     ],
-
-    [
-      EntityType.TEST,
-      {
-        helpLinkId: 'tests'
-      }
-    ],
-
     [
       EntityType.DEVICE_PROFILE,
       {
@@ -402,6 +393,12 @@ export const entityTypeResources = new Map<EntityType, EntityTypeResource<BaseDa
       EntityType.DASHBOARD,
       {
         helpLinkId: 'dashboards'
+      }
+    ],
+    [
+      EntityType.TEST,
+      {
+        helpLinkId: 'test'
       }
     ],
     [

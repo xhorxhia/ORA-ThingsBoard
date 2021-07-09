@@ -21,6 +21,15 @@ import { AppState } from '@core/core.state';
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { DialogComponent } from '@shared/components/dialog.component';
 import { Router } from '@angular/router';
+import {
+  createTestProfileConfiguration,
+  TestProfile,
+  TestProfileType,
+  TestProvisionConfiguration,
+  TestProvisionType,
+  TestTransportType,
+  testTransportTypeTranslationMap
+} from '@shared/models/test.models';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { AddEntityDialogData } from '@home/models/entity/entity-component.models';
 import { BaseData, HasId } from '@shared/models/base-data';
@@ -28,12 +37,14 @@ import { EntityType } from '@shared/models/entity-type.models';
 import { EntityId } from '@shared/models/id/entity-id';
 import { Observable, of, Subscription, throwError } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { TestService } from '@core/http/test.service';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { MediaBreakpoints } from '@shared/models/constants';
+import { RuleChainId } from '@shared/models/id/rule-chain-id';
+import { ServiceType } from '@shared/models/queue.models';
 import { deepTrim } from '@core/utils';
-import { TestService } from '@app/core/http/test.service';
 
 @Component({
   selector: 'tb-test-wizard',
@@ -47,13 +58,37 @@ export class TestWizardDialogComponent extends
   @ViewChild('addTestWizardStepper', {static: true}) addTestWizardStepper: MatHorizontalStepper;
 
   selectedIndex = 0;
+
   showNext = true;
 
   createProfile = false;
+  created=true;
+
+
   entityType = EntityType;
+
+  testTransportTypes = Object.values(TestTransportType);
+
+  testTransportTypeTranslations = testTransportTypeTranslationMap;
+
+
   testWizardFormGroup: FormGroup;
+
+  transportConfigFormGroup: FormGroup;
+
+  alarmRulesFormGroup: FormGroup;
+
+  provisionConfigFormGroup: FormGroup;
+
+  credentialsFormGroup: FormGroup;
+
+  customerFormGroup: FormGroup;
+
+  labelPosition: MatHorizontalStepper['labelPosition'] = 'end';
+
+  serviceType = ServiceType.TB_RULE_ENGINE;
+
   private subscriptions: Subscription[] = [];
-  labelPosition = 'end';
 
   constructor(protected store: Store<AppState>,
               protected router: Router,
@@ -65,15 +100,81 @@ export class TestWizardDialogComponent extends
               private fb: FormBuilder) {
     super(store, router, dialogRef);
     this.testWizardFormGroup = this.fb.group({
-      name: ['', Validators.required],
-      road: ['', Validators.required],
-      accidentType: ['', Validators.required],
-      nrOfVehicles: ['', Validators.required],
-      description: ['']
+        name: ['', Validators.required],
+        road: [''],
+      accidentType: [''],
+      nrOfVehicles: [''],
+      description: [''],
+        overwriteActivityTime: [false],
+        addProfileType: [0],
+        testProfileId: [null, Validators.required],
+        newTestProfileTitle: [{value: null, disabled: true}],
+        defaultRuleChainId: [{value: null, disabled: true}],
+        defaultQueueName: [{value: null, disabled: true}],
+
       }
     );
 
+    this.subscriptions.push(this.testWizardFormGroup.get('addProfileType').valueChanges.subscribe(
+      (addProfileType: number) => {
+        if (addProfileType === 0) {
+          this.testWizardFormGroup.get('testProfileId').setValidators([Validators.required]);
+          this.testWizardFormGroup.get('newTestProfileTitle').setValidators(null);
+          this.testWizardFormGroup.get('newTestProfileTitle').disable();
+          this.testWizardFormGroup.get('defaultRuleChainId').disable();
+          this.testWizardFormGroup.get('defaultQueueName').disable();
+          this.testWizardFormGroup.updateValueAndValidity();
+          this.createProfile = false;
+        } else {
+          this.testWizardFormGroup.get('testProfileId').setValidators(null);
+          this.testWizardFormGroup.get('testProfileId').disable();
+          this.testWizardFormGroup.get('newTestProfileTitle').setValidators([Validators.required]);
+          this.testWizardFormGroup.get('newTestProfileTitle').enable();
+          this.testWizardFormGroup.get('defaultRuleChainId').enable();
+          this.testWizardFormGroup.get('defaultQueueName').enable();
 
+          this.testWizardFormGroup.updateValueAndValidity();
+          this.createProfile = true;
+        }
+      }
+    ));
+
+
+    // this.subscriptions.push(this.transportConfigFormGroup.get('transportType').valueChanges.subscribe((transportType) => {
+    //   this.testProfileTransportTypeChanged(transportType);
+    // }));
+
+    this.alarmRulesFormGroup = this.fb.group({
+        alarms: [null]
+      }
+    );
+
+    this.provisionConfigFormGroup = this.fb.group(
+      {
+        provisionConfiguration: [{
+          type: TestProvisionType.DISABLED
+        } as TestProvisionConfiguration, [Validators.required]]
+      }
+    );
+
+    this.credentialsFormGroup  = this.fb.group({
+        setCredential: [false],
+        credential: [{value: null, disabled: true}]
+      }
+    );
+
+    this.subscriptions.push(this.credentialsFormGroup.get('setCredential').valueChanges.subscribe((value) => {
+      if (value) {
+        this.credentialsFormGroup.get('credential').enable();
+      } else {
+        this.credentialsFormGroup.get('credential').disable();
+      }
+    }));
+
+    this.customerFormGroup = this.fb.group({
+        customerId: [null]
+      }
+    );
 
     this.labelPosition = this.breakpointObserver.isMatched(MediaBreakpoints['gt-sm']) ? 'end' : 'bottom';
 
@@ -120,16 +221,15 @@ export class TestWizardDialogComponent extends
     }
     switch (index) {
       case 0:
-        return 'test.wizard.test-detailsss';
+        return 'test.wizard.test-details';
+
       case 1:
-        return 'test-profile.transport-configuration';
-      case 2:
         return 'test-profile.alarm-rules';
-      case 3:
+      case 2:
         return 'test-profile.test-provisioning';
-      case 4:
+      case 3:
         return 'test.credentials';
-      case 5:
+      case 4:
         return 'customer.customer';
     }
   }
@@ -139,26 +239,37 @@ export class TestWizardDialogComponent extends
   }
 
 
-  add(): void {
-    console.log(" adddddddddddd");
 
-    this.createTest();
+  add(): void {
+   this.createTest()
+    this.dialogRef.close(this.created);
+
 
   }
 
 
+
+
   private createTest(): Observable<BaseData<HasId>> {
-    console.log( this.testWizardFormGroup.get('name').value + " ------------");
     const test = {
       name: this.testWizardFormGroup.get('name').value,
       road: this.testWizardFormGroup.get('road').value,
       accidentType: this.testWizardFormGroup.get('accidentType').value,
       nrOfVehicles: this.testWizardFormGroup.get('nrOfVehicles').value,
       description: this.testWizardFormGroup.get('description').value,
-
       customerId: null
+
+
+
+
     };
-    console.log("----:::  ", test)
+    if (this.customerFormGroup.get('customerId').value) {
+      test.customerId = {
+        entityType: EntityType.CUSTOMER,
+        id: this.customerFormGroup.get('customerId').value
+      };
+    }
+    console.log("jam mir"+deepTrim(test.name))
     this.testService.saveTest(test).subscribe();
     return this.data.entitiesTableConfig.saveEntity(deepTrim(test));
   }

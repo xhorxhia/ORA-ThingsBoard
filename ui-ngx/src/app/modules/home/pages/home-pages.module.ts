@@ -36,7 +36,7 @@ import { DeviceProfileModule } from './device-profile/device-profile.module';
 import { ApiUsageModule } from '@home/pages/api-usage/api-usage.module';
 import { EdgeModule } from '@home/pages/edge/edge.module';
 import { OtaUpdateModule } from '@home/pages/ota-update/ota-update.module';
-import {TestModule} from "@home/pages/test/test.module";
+import { TestModule } from './test/test.module';
 
 @NgModule({
   exports: [
@@ -47,7 +47,6 @@ import {TestModule} from "@home/pages/test/test.module";
     TenantModule,
     DeviceProfileModule,
     DeviceModule,
-    TestModule,
     AssetModule,
     EdgeModule,
     EntityViewModule,
@@ -58,7 +57,9 @@ import {TestModule} from "@home/pages/test/test.module";
     AuditLogModule,
     ApiUsageModule,
     OtaUpdateModule,
-    UserModule
+    UserModule,
+    TestModule
+
   ],
   providers: [
     {

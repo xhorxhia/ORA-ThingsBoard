@@ -14,25 +14,13 @@
 /// limitations under the License.
 ///
 
-import { Component } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { AppState } from '@core/core.state';
-import { TestInfo } from '@shared/models/test.models';
-import { EntityTabsComponent } from '../../components/entity/entity-tabs.component';
+import { EntityId } from './entity-id';
+import { EntityType } from '@shared/models/entity-type.models';
 
-@Component({
-  selector: 'tb-test-tabs',
-  templateUrl: './test-tabs.component.html',
-  styleUrls: []
-})
-export class TestTabsComponent extends EntityTabsComponent<TestInfo> {
-
-  constructor(protected store: Store<AppState>) {
-    super(store);
+export class TestProfileId implements EntityId {
+  entityType = EntityType.TEST_PROFILE;
+  id: string;
+  constructor(id: string) {
+    this.id = id;
   }
-
-  ngOnInit() {
-    super.ngOnInit();
-  }
-
 }

@@ -19,19 +19,18 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { EntitiesTableComponent } from '../../components/entity/entities-table.component';
 import { Authority } from '@shared/models/authority.enum';
-import { TestTableConfigResolver } from '@modules/home/pages/test/test-table-config.resolver';
-
+import {TestTableConfigResolver} from "@home/pages/test/tests-table-config.resolver";
 
 const routes: Routes = [
   {
-    path: 'tests',
+    path: 'test',
     component: EntitiesTableComponent,
     data: {
       auth: [Authority.TENANT_ADMIN, Authority.CUSTOMER_USER],
-      title: 'test.tests',
-      devicesType: 'tenant',
+      title: 'test.test',
+      testsType: 'tenant',
       breadcrumb: {
-        label: 'test.tests',
+        label: 'test.test',
         icon: 'devices_other'
       }
     },

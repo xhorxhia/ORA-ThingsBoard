@@ -18,7 +18,7 @@ import { NgModule } from '@angular/core';
 import { Lwm2mDeviceProfileTransportConfigurationComponent } from './lwm2m-device-profile-transport-configuration.component';
 import { Lwm2mObjectListComponent } from './lwm2m-object-list.component';
 import { Lwm2mObserveAttrTelemetryComponent } from './lwm2m-observe-attr-telemetry.component';
-import { Lwm2mObserveAttrTelemetryResourcesComponent } from './lwm2m-observe-attr-telemetry-resources.component';
+import { Lwm2mObserveAttrTelemetryResourceComponent } from './lwm2m-observe-attr-telemetry-resource.component';
 import { Lwm2mAttributesDialogComponent } from './lwm2m-attributes-dialog.component';
 import { Lwm2mAttributesComponent } from './lwm2m-attributes.component';
 import { Lwm2mAttributesKeyListComponent } from './lwm2m-attributes-key-list.component';
@@ -27,7 +27,6 @@ import { Lwm2mObjectAddInstancesDialogComponent } from './lwm2m-object-add-insta
 import { Lwm2mObjectAddInstancesListComponent } from './lwm2m-object-add-instances-list.component';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '@app/shared/shared.module';
-import { Lwm2mObserveAttrTelemetryInstancesComponent } from './lwm2m-observe-attr-telemetry-instances.component';
 
 @NgModule({
   declarations:
@@ -35,14 +34,13 @@ import { Lwm2mObserveAttrTelemetryInstancesComponent } from './lwm2m-observe-att
       Lwm2mDeviceProfileTransportConfigurationComponent,
       Lwm2mObjectListComponent,
       Lwm2mObserveAttrTelemetryComponent,
-      Lwm2mObserveAttrTelemetryResourcesComponent,
+      Lwm2mObserveAttrTelemetryResourceComponent,
       Lwm2mAttributesDialogComponent,
       Lwm2mAttributesComponent,
       Lwm2mAttributesKeyListComponent,
       Lwm2mDeviceConfigServerComponent,
       Lwm2mObjectAddInstancesDialogComponent,
-      Lwm2mObjectAddInstancesListComponent,
-      Lwm2mObserveAttrTelemetryInstancesComponent
+      Lwm2mObjectAddInstancesListComponent
     ],
   imports: [
     CommonModule,
@@ -52,14 +50,13 @@ import { Lwm2mObserveAttrTelemetryInstancesComponent } from './lwm2m-observe-att
     Lwm2mDeviceProfileTransportConfigurationComponent,
     Lwm2mObjectListComponent,
     Lwm2mObserveAttrTelemetryComponent,
-    Lwm2mObserveAttrTelemetryResourcesComponent,
+    Lwm2mObserveAttrTelemetryResourceComponent,
     Lwm2mAttributesDialogComponent,
     Lwm2mAttributesComponent,
     Lwm2mAttributesKeyListComponent,
     Lwm2mDeviceConfigServerComponent,
     Lwm2mObjectAddInstancesDialogComponent,
-    Lwm2mObjectAddInstancesListComponent,
-    Lwm2mObserveAttrTelemetryInstancesComponent
+    Lwm2mObjectAddInstancesListComponent
   ],
   providers: [
   ]

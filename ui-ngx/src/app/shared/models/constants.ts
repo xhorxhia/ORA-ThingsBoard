@@ -114,8 +114,7 @@ export const HelpLinks = {
     customers: helpBaseUrl + '/docs/user-guide/ui/customers',
     users: helpBaseUrl + '/docs/user-guide/ui/users',
     devices: helpBaseUrl + '/docs/user-guide/ui/devices',
-
-    tests: helpBaseUrl + '/docs/user-guide/ui/tests',
+    test: helpBaseUrl + '/docs/user-guide/ui/test',
 
     deviceProfiles: helpBaseUrl + '/docs/user-guide/ui/device-profiles',
     edges: helpBaseUrl + '/docs/user-guide/ui/edges',

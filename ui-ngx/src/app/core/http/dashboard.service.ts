@@ -67,7 +67,9 @@ export class DashboardService {
       defaultHttpOptionsFromConfig(config));
   }
 
+
   public getDashboard(dashboardId: string, config?: RequestConfig): Observable<Dashboard> {
+    console.log("kjo eshte fiks")
     return this.http.get<Dashboard>(`/api/dashboard/${dashboardId}`, defaultHttpOptionsFromConfig(config));
   }
 

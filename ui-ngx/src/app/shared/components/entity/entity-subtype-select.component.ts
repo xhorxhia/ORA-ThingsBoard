@@ -27,6 +27,7 @@ import { BroadcastService } from '@app/core/services/broadcast.service';
 import { AssetService } from '@core/http/asset.service';
 import { EdgeService } from '@core/http/edge.service';
 import { EntityViewService } from '@core/http/entity-view.service';
+import {TestService} from "@core/http/test.service";
 
 @Component({
   selector: 'tb-entity-subtype-select',
@@ -78,6 +79,8 @@ export class EntitySubTypeSelectComponent implements ControlValueAccessor, OnIni
               private broadcast: BroadcastService,
               public translate: TranslateService,
               private deviceService: DeviceService,
+              private testService: TestService,
+
               private assetService: AssetService,
               private edgeService: EdgeService,
               private entityViewService: EntityViewService,
@@ -109,6 +112,14 @@ export class EntitySubTypeSelectComponent implements ControlValueAccessor, OnIni
         this.entitySubtypeTitle = 'device.device-type';
         this.entitySubtypeRequiredText = 'device.device-type-required';
         this.broadcastSubscription = this.broadcast.on('deviceSaved', () => {
+          this.subTypes = null;
+          this.subTypesOptionsSubject.next('');
+        });
+        break;
+      case EntityType.TEST:
+        this.entitySubtypeTitle = 'test.test-type';
+        this.entitySubtypeRequiredText = 'test.test-type-required';
+        this.broadcastSubscription = this.broadcast.on('testSaved', () => {
           this.subTypes = null;
           this.subTypesOptionsSubject.next('');
         });
@@ -216,6 +227,9 @@ export class EntitySubTypeSelectComponent implements ControlValueAccessor, OnIni
           this.subTypes = this.assetService.getAssetTypes({ignoreLoading: true});
           break;
         case EntityType.DEVICE:
+          this.subTypes = this.deviceService.getDeviceTypes({ignoreLoading: true});
+          break;
+        case EntityType.TEST:
           this.subTypes = this.deviceService.getDeviceTypes({ignoreLoading: true});
           break;
         case EntityType.EDGE:

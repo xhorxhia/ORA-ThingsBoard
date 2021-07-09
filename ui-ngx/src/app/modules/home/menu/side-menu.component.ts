@@ -30,6 +30,7 @@ export class SideMenuComponent implements OnInit {
 
   constructor(private menuService: MenuService) {
   }
+
   trackByMenuSection(index: number, section: MenuSection){
     return section.id;
   }

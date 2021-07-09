@@ -16,10 +16,10 @@
 
 import { Component, ElementRef, EventEmitter, forwardRef, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { PageLink } from '@shared/models/page/page-link';
 import { Direction } from '@shared/models/page/sort-order';
-import { catchError, debounceTime, distinctUntilChanged, map, share, switchMap, tap } from 'rxjs/operators';
+import { map, mergeMap, share, startWith, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/core/core.state';
 import { TranslateService } from '@ngx-translate/core';
@@ -33,7 +33,6 @@ import { ENTER } from '@angular/cdk/keycodes';
 import { TenantProfile } from '@shared/models/tenant.model';
 import { MatDialog } from '@angular/material/dialog';
 import { TenantProfileDialogComponent, TenantProfileDialogData } from './tenant-profile-dialog.component';
-import { emptyPageData } from "@shared/models/page/page-data";
 
 @Component({
   selector: 'tb-tenant-profile-autocomplete',
@@ -100,7 +99,6 @@ export class TenantProfileAutocompleteComponent implements ControlValueAccessor,
   ngOnInit() {
     this.filteredTenantProfiles = this.selectTenantProfileFormGroup.get('tenantProfile').valueChanges
       .pipe(
-        debounceTime(150),
         tap((value: EntityInfoData | string) => {
           let modelValue: TenantProfileId | null;
           if (typeof value === 'string' || !value) {
@@ -111,8 +109,7 @@ export class TenantProfileAutocompleteComponent implements ControlValueAccessor,
           this.updateView(modelValue);
         }),
         map(value => value ? (typeof value === 'string' ? value : value.name) : ''),
-        distinctUntilChanged(),
-        switchMap(name => this.fetchTenantProfiles(name)),
+        mergeMap(name => this.fetchTenantProfiles(name) ),
         share()
       );
   }
@@ -177,7 +174,6 @@ export class TenantProfileAutocompleteComponent implements ControlValueAccessor,
       direction: Direction.ASC
     });
     return this.tenantProfileService.getTenantProfileInfos(pageLink, {ignoreLoading: true}).pipe(
-      catchError(() => of(emptyPageData<EntityInfoData>())),
       map(pageData => {
         return pageData.data;
       })

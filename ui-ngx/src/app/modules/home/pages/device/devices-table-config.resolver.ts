@@ -104,6 +104,9 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
 
     this.config.loadEntity = id => this.deviceService.getDeviceInfo(id.id);
     this.config.saveEntity = device => {
+      console.log("de"+device.id)
+      console.log(device)
+
       return this.deviceService.saveDevice(device).pipe(
         tap(() => {
           this.broadcast.broadcast('deviceSaved');
@@ -528,7 +531,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
       data: {
         deviceId: device.id.id,
-        isReadOnly: this.config.componentsData.deviceScope === 'customer_user' || this.config.componentsData.deviceScope === 'edge_customer_user'
+        isReadOnly: this.config.componentsData.deviceScope === 'customer_user'
       }
     }).afterClosed().subscribe(deviceCredentials => {
       if (isDefinedAndNotNull(deviceCredentials)) {

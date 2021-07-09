@@ -1,40 +1,7 @@
-<!--
-
-    Copyright © 2016-2021 The Thingsboard Authors
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-
-<div class="tb-details-buttons" fxLayout.xs="column">
-
-  <div fxLayout="row" fxLayout.xs="column">
-    <button mat-raised-button
-            ngxClipboard
-            (cbOnSuccess)="onTestIdCopied($event)"
-            [cbContent]="entity?.id?.id"
-            [fxShow]="!isEdit">
-      <mat-icon svgIcon="mdi:clipboard-arrow-left"></mat-icon>
-      <span translate>test.copyId</span>
-    </button>
-  </div>
-</div>
 
 <div class="mat-padding" fxLayout="column">
-
   <form [formGroup]="entityForm">
     <fieldset [disabled]="(isLoading$ | async) || !isEdit">
-
       <mat-form-field class="mat-block">
         <mat-label translate>test.name</mat-label>
         <input matInput formControlName="name" required>
@@ -43,43 +10,26 @@
         </mat-error>
       </mat-form-field>
 
-
-
       <mat-form-field class="mat-block">
         <mat-label translate>test.road</mat-label>
-        <input matInput formControlName="road" required>
-        <mat-error *ngIf="entityForm.get('road')">
+        <input matInput formControlName="road">
+        <mat-error *ngIf="entityForm.get('road').hasError('required')">
           {{ 'test.road-required' | translate }}
         </mat-error>
       </mat-form-field>
-
       <mat-form-field class="mat-block">
         <mat-label translate>test.accidentType</mat-label>
-        <input matInput formControlName="accidentType" required>
-        <mat-error *ngIf="entityForm.get('accidentType').hasError('required')">
-          {{ 'test.accidentType-required' | translate }}
-        </mat-error>
+        <input matInput formControlName="accidentType">
       </mat-form-field>
-
       <mat-form-field class="mat-block">
         <mat-label translate>test.nrOfVehicles</mat-label>
-        <input matInput formControlName="nrOfVehicles" required>
-        <mat-error *ngIf="entityForm.get('nrOfVehicles').hasError('required')">
-          {{ 'test.nrOfVehicles-required' | translate }}
-        </mat-error>
+        <input matInput formControlName="nrOfVehicles">
       </mat-form-field>
 
       <mat-form-field class="mat-block">
         <mat-label translate>test.description</mat-label>
-        <input matInput formControlName="description" required>
-        <mat-error *ngIf="entityForm.get('description').hasError('required')">
-          {{ 'test.description-required' | translate }}
-        </mat-error>
+        <textarea matInput formControlName="description" rows="2"></textarea>
       </mat-form-field>
-
-
-
-
     </fieldset>
   </form>
 </div>

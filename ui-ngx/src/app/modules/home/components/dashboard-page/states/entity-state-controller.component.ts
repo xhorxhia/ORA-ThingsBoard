@@ -275,15 +275,15 @@ export class EntityStateControllerComponent extends StateControllerComponent imp
   }
 
   private gotoState(stateId: string, update: boolean, openRightLayout?: boolean) {
-    const isStateIdChanged = this.dashboardCtrl.dashboardCtx.state !== stateId;
+    update = update && this.dashboardCtrl.dashboardCtx.state !== stateId;
     this.dashboardCtrl.openDashboardState(stateId, openRightLayout);
     this.mobileService.handleDashboardStateName(this.getStateName(this.stateObject.length - 1));
     if (update) {
-      this.updateLocation(isStateIdChanged);
+      this.updateLocation();
     }
   }
 
-  private updateLocation(isStateIdChanged: boolean) {
+  private updateLocation() {
     if (this.stateObject[this.stateObject.length - 1].id) {
       let newState;
       if (this.isDefaultState()) {
@@ -291,7 +291,7 @@ export class EntityStateControllerComponent extends StateControllerComponent imp
       } else {
         newState = objToBase64URI(this.stateObject);
       }
-      this.updateStateParam(newState, !isStateIdChanged);
+      this.updateStateParam(newState);
     }
   }
 

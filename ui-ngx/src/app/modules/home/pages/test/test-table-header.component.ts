@@ -18,11 +18,12 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import { EntityTableHeaderComponent } from '../../components/entity/entity-table-header.component';
+import { TestInfo } from '@app/shared/models/test.models';
 import { EntityType } from '@shared/models/entity-type.models';
-import {TestInfo} from "@shared/models/test.models";
+import { TestProfileId } from '../../../../shared/models/id/test-profile-id';
 
 @Component({
-  selector: 'tb-device-table-header',
+  selector: 'tb-test-table-header',
   templateUrl: './test-table-header.component.html',
   styleUrls: ['./test-table-header.component.scss']
 })
@@ -34,9 +35,9 @@ export class TestTableHeaderComponent extends EntityTableHeaderComponent<TestInf
     super(store);
   }
 
-  // deviceProfileChanged(deviceProfileId: DeviceProfileId) {
-  //   this.entitiesTableConfig.componentsData.deviceProfileId = deviceProfileId;
-  //   this.entitiesTableConfig.table.resetSortAndFilter(true);
-  // }
+  testProfileChanged(testProfileId: TestProfileId) {
+    this.entitiesTableConfig.componentsData.testProfileId = testProfileId;
+    this.entitiesTableConfig.table.resetSortAndFilter(true);
+  }
 
 }

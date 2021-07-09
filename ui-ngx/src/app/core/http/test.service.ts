@@ -30,6 +30,8 @@ import {
 } from '@app/shared/models/test.models';
 import { EntitySubtype } from '@app/shared/models/entity-type.models';
 import { AuthService } from '@core/auth/auth.service';
+import {DashboardInfo} from "@shared/models/dashboard.models";
+import {Device, DeviceCredentials, DeviceInfo, DeviceSearchQuery} from "@shared/models/device.models";
 
 @Injectable({
   providedIn: 'root'
@@ -40,9 +42,28 @@ export class TestService {
     private http: HttpClient
   ) { }
 
-  public getTenantTestInfos(pageLink: PageLink, type: string = '',
+  public getTenantTests(pageLink: PageLink,
                               config?: RequestConfig): Observable<PageData<TestInfo>> {
-    return this.http.get<PageData<TestInfo>>(`/api/tenant/testInfos${pageLink.toQuery()}&type=${type}`,
+    return this.http.get<PageData<TestInfo>>(`/api/tenant/tests${pageLink.toQuery()}`,
+      defaultHttpOptionsFromConfig(config));
+  }
+
+  public getTenantTestByTenantId(tenantId: string, pageLink: PageLink,
+                                       config?: RequestConfig): Observable<PageData<DashboardInfo>> {
+    return this.http.get<PageData<DashboardInfo>>(`/api/tenant/${tenantId}/tests${pageLink.toQuery()}`,
+      defaultHttpOptionsFromConfig(config));
+  }
+
+  public getCustomerTests(customerId: string, pageLink: PageLink, type: string = '',
+                                config?: RequestConfig): Observable<PageData<TestInfo>> {
+    return this.http.get<PageData<TestInfo>>(`/api/customer/${customerId}/testInfos${pageLink.toQuery()}&type=${type}`,
+      defaultHttpOptionsFromConfig(config));
+  }
+
+  public getCustomerTestInfosByTestProfileId(customerId: string, pageLink: PageLink, testProfileId: string = '',
+                                                 config?: RequestConfig): Observable<PageData<TestInfo>> {
+    console.log("mos valle futem ketu")
+    return this.http.get<PageData<TestInfo>>(`/api/customer/${customerId}/testInfos${pageLink.toQuery()}&testProfileId=${testProfileId}`,
       defaultHttpOptionsFromConfig(config));
   }
 
@@ -55,66 +76,50 @@ export class TestService {
   }
 
   public getTestInfo(testId: string, config?: RequestConfig): Observable<TestInfo> {
+    console.log(testId)
     return this.http.get<TestInfo>(`/api/test/info/${testId}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public saveTest(test: Test, config?: RequestConfig): Observable<Test> {
-    return this.http.post<Test>('/api/test', test, defaultHttpOptionsFromConfig(config));
+  public saveTest(test: Test,config?: RequestConfig): Observable<Test> {
+    console.log("po ktu vi une?" +test)
+    return this.http.post<Test>('/api/test', test,defaultHttpOptionsFromConfig(config));
   }
 
   public deleteTest(testId: string, config?: RequestConfig) {
+    console.log("dhe ti me duhesh tani")
     return this.http.delete(`/api/test/${testId}`, defaultHttpOptionsFromConfig(config));
   }
 
-  public getTestTypes(config?: RequestConfig): Observable<Array<EntitySubtype>> {
-    return this.http.get<Array<EntitySubtype>>('/api/test/types', defaultHttpOptionsFromConfig(config));
-  }
-
-  public sendOneWayRpcCommand(testId: string, requestBody: any, config?: RequestConfig): Observable<any> {
-    return this.http.post<Test>(`/api/plugins/rpc/oneway/${testId}`, requestBody, defaultHttpOptionsFromConfig(config));
-  }
-
-  public sendTwoWayRpcCommand(testId: string, requestBody: any, config?: RequestConfig): Observable<any> {
-    return this.http.post<Test>(`/api/plugins/rpc/twoway/${testId}`, requestBody, defaultHttpOptionsFromConfig(config));
-  }
-
-  public findByQuery(query: TestSearchQuery,
-                     config?: RequestConfig): Observable<Array<Test>> {
-    return this.http.post<Array<Test>>('/api/tests', query, defaultHttpOptionsFromConfig(config));
-  }
-
-  public findByName(testName: string, config?: RequestConfig): Observable<Test> {
-    return this.http.get<Test>(`/api/tenant/tests?testName=${testName}`, defaultHttpOptionsFromConfig(config));
-  }
-
-  public claimTest(testName: string, claimRequest: ClaimRequest,
-                     config?: RequestConfig): Observable<ClaimResult> {
-    return this.http.post<ClaimResult>(`/api/customer/test/${testName}/claim`, claimRequest, defaultHttpOptionsFromConfig(config));
-  }
-
-  public unclaimTest(testName: string, config?: RequestConfig) {
-    return this.http.delete(`/api/customer/test/${testName}/claim`, defaultHttpOptionsFromConfig(config));
-  }
-
-  ////////////////////////// hiqi
-  // public getTenantDeviceInfosByDeviceProfileId(pageLink: PageLink, deviceProfileId: string = '',
-  //                                              config?: RequestConfig): Observable<PageData<TestInfo>> {
-  //   return this.http.get<PageData<TestInfo>>(`/api/tenant/deviceInfos${pageLink.toQuery()}&deviceProfileId=${deviceProfileId}`,
-  //     defaultHttpOptionsFromConfig(config));
+  // public getTestTypes(config?: RequestConfig): Observable<Array<EntitySubtype>> {
+  //   return this.http.get<Array<EntitySubtype>>('/api/test/types', defaultHttpOptionsFromConfig(config));
   // }
-  //
-  // public getCustomerDeviceInfosByDeviceProfileId(customerId: string, pageLink: PageLink, deviceProfileId: string = '',
-  //                                                config?: RequestConfig): Observable<PageData<TestInfo>> {
-  //   return this.http.get<PageData<TestInfo>>(`/api/customer/${customerId}/deviceInfos${pageLink.toQuery()}&deviceProfileId=${deviceProfileId}`,
-  //     defaultHttpOptionsFromConfig(config));
-  // }
-  // public getTenantDeviceInfos(pageLink: PageLink, type: string = '',
-  //                             config?: RequestConfig): Observable<PageData<TestInfo>> {
-  //   return this.http.get<PageData<TestInfo>>(`/api/tenant/deviceInfos${pageLink.toQuery()}&type=${type}`,
-  //     defaultHttpOptionsFromConfig(config));
-  // }
-  //
-  // public deleteDevice(deviceId: string, config?: RequestConfig) {
-  //   return this.http.delete(`/api/device/${deviceId}`, defaultHttpOptionsFromConfig(config));
-  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

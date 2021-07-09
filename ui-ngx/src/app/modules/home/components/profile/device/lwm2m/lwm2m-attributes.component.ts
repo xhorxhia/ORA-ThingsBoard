@@ -14,31 +14,29 @@
 /// limitations under the License.
 ///
 
-import { Component, forwardRef, Input, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { isEmpty, isUndefinedOrNull } from '@core/utils';
 import { Lwm2mAttributesDialogComponent, Lwm2mAttributesDialogData } from './lwm2m-attributes-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AttributesNameValueMap } from './lwm2m-profile-config.models';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+
 
 @Component({
   selector: 'tb-profile-lwm2m-attributes',
   templateUrl: './lwm2m-attributes.component.html',
-  styleUrls: [],
+  styleUrls: ['./lwm2m-attributes.component.scss'],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => Lwm2mAttributesComponent),
     multi: true
   }]
 })
-export class Lwm2mAttributesComponent implements ControlValueAccessor, OnDestroy {
-  attributesFormGroup: FormGroup;
+export class Lwm2mAttributesComponent implements ControlValueAccessor {
+  attributeLwm2mFormGroup: FormGroup;
 
   private requiredValue: boolean;
-  private destroy$ = new Subject();
 
   @Input()
   isAttributeTelemetry: boolean;
@@ -52,6 +50,9 @@ export class Lwm2mAttributesComponent implements ControlValueAccessor, OnDestroy
   @Input()
   isResource = false;
 
+  @Output()
+  updateAttributeLwm2m = new EventEmitter<any>();
+
   @Input()
   set required(value: boolean) {
     this.requiredValue = coerceBooleanProperty(value);
@@ -61,21 +62,7 @@ export class Lwm2mAttributesComponent implements ControlValueAccessor, OnDestroy
   }
 
   constructor(private dialog: MatDialog,
-              private fb: FormBuilder) {
-    this.attributesFormGroup = this.fb.group({
-      attributes: [{}]
-    });
-    this.attributesFormGroup.get('attributes').valueChanges.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(attributes => {
-      this.propagateChange(attributes);
-    });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+              private fb: FormBuilder) {}
 
   registerOnChange(fn: any): void {
     this.propagateChange = fn;
@@ -87,18 +74,24 @@ export class Lwm2mAttributesComponent implements ControlValueAccessor, OnDestroy
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
     if (isDisabled) {
-      this.attributesFormGroup.disable({emitEvent: false});
+      this.attributeLwm2mFormGroup.disable({emitEvent: false});
     } else {
-      this.attributesFormGroup.enable({emitEvent: false});
+      this.attributeLwm2mFormGroup.enable({emitEvent: false});
     }
   }
 
+  ngOnInit() {
+    this.attributeLwm2mFormGroup = this.fb.group({
+      attributes: [{}]
+    });
+  }
+
   writeValue(value: AttributesNameValueMap | null) {
-    this.attributesFormGroup.patchValue({attributes: value}, {emitEvent: false});
+    this.attributeLwm2mFormGroup.patchValue({attributes: value}, {emitEvent: false});
   }
 
   get attributesValueMap(): AttributesNameValueMap {
-    return this.attributesFormGroup.get('attributes').value;
+    return this.attributeLwm2mFormGroup.get('attributes').value;
   }
 
   isDisableBtn(): boolean {
@@ -147,7 +140,8 @@ export class Lwm2mAttributesComponent implements ControlValueAccessor, OnDestroy
       }
     }).afterClosed().subscribe((result) => {
       if (result) {
-        this.attributesFormGroup.patchValue({attributes: result});
+        this.attributeLwm2mFormGroup.patchValue({attributeLwm2m: result});
+        this.updateAttributeLwm2m.next(result);
       }
     });
   }

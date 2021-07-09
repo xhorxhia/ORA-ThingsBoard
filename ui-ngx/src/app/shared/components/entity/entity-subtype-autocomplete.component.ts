@@ -16,17 +16,8 @@
 
 import { AfterViewInit, Component, ElementRef, forwardRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Observable, of, Subscription, throwError } from 'rxjs';
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  publishReplay,
-  refCount,
-  switchMap,
-  tap
-} from 'rxjs/operators';
+import { Observable, Subscription, throwError } from 'rxjs';
+import { map, mergeMap, publishReplay, refCount, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AppState } from '@app/core/core.state';
 import { TranslateService } from '@ngx-translate/core';
@@ -146,14 +137,12 @@ export class EntitySubTypeAutocompleteComponent implements ControlValueAccessor,
 
     this.filteredSubTypes = this.subTypeFormGroup.get('subType').valueChanges
       .pipe(
-        debounceTime(150),
-        distinctUntilChanged(),
         tap(value => {
             this.updateView(value);
         }),
         // startWith<string | EntitySubtype>(''),
         map(value => value ? value : ''),
-        switchMap(type => this.fetchSubTypes(type))
+        mergeMap(type => this.fetchSubTypes(type) )
       );
   }
 
@@ -232,7 +221,6 @@ export class EntitySubTypeAutocompleteComponent implements ControlValueAccessor,
       }
       if (subTypesObservable) {
         this.subTypes = subTypesObservable.pipe(
-          catchError(() => of([] as Array<EntitySubtype>)),
           map(subTypes => subTypes.map(subType => subType.type)),
           publishReplay(1),
           refCount()

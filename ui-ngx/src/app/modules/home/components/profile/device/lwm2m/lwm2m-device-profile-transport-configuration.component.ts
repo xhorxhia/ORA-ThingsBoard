@@ -38,8 +38,10 @@ import {
   INSTANCES,
   KEY_NAME,
   Lwm2mProfileConfigModels,
+  ModelValue,
   ObjectLwM2M,
   OBSERVE,
+  OBSERVE_ATTR_TELEMETRY,
   PowerMode,
   PowerModeTranslationMap,
   RESOURCES,
@@ -47,7 +49,7 @@ import {
   TELEMETRY
 } from './lwm2m-profile-config.models';
 import { DeviceProfileService } from '@core/http/device-profile.service';
-import { deepClone, isDefinedAndNotNull, isEmpty } from '@core/utils';
+import { deepClone, isDefinedAndNotNull, isEmpty, isUndefined } from '@core/utils';
 import { JsonArray, JsonObject } from '@angular/compiler-cli/ngcc/src/packages/entry_point';
 import { Direction } from '@shared/models/page/sort-order';
 import _ from 'lodash';
@@ -115,8 +117,7 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
         swUpdateStrategy: [1, []],
         fwUpdateResource: [{value: '', disabled: true}, []],
         swUpdateResource: [{value: '', disabled: true}, []],
-        powerMode: [PowerMode.DRX, Validators.required],
-        compositeOperationsSupport: [false]
+        powerMode: [null, Validators.required]
       })
     });
     this.lwm2mDeviceConfigFormGroup = this.fb.group({
@@ -224,30 +225,32 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
   }
 
   private initWriteValue = (): void => {
-    const objectIds = this.getObjectsFromJsonAllConfig();
-    if (objectIds.length > 0) {
+    const modelValue = {objectIds: [], objectsList: []} as ModelValue;
+    modelValue.objectIds = this.getObjectsFromJsonAllConfig();
+    if (modelValue.objectIds.length > 0) {
       const sortOrder = {
         property: 'id',
         direction: Direction.ASC
       };
-      this.deviceProfileService.getLwm2mObjects(sortOrder, objectIds, null).subscribe(
+      this.deviceProfileService.getLwm2mObjects(sortOrder, modelValue.objectIds, null).subscribe(
         (objectsList) => {
-          this.updateWriteValue(objectsList);
+          modelValue.objectsList = objectsList;
+          this.updateWriteValue(modelValue);
         }
       );
     } else {
-      this.updateWriteValue([]);
+      this.updateWriteValue(modelValue);
     }
   }
 
-  private updateWriteValue = (value: ObjectLwM2M[]): void => {
+  private updateWriteValue = (value: ModelValue): void => {
     const fwResource = isDefinedAndNotNull(this.configurationValue.clientLwM2mSettings.fwUpdateResource) ?
       this.configurationValue.clientLwM2mSettings.fwUpdateResource : '';
     const swResource = isDefinedAndNotNull(this.configurationValue.clientLwM2mSettings.swUpdateResource) ?
       this.configurationValue.clientLwM2mSettings.swUpdateResource : '';
     this.lwm2mDeviceProfileFormGroup.patchValue({
         objectIds: value,
-        observeAttrTelemetry: this.getObserveAttrTelemetryObjects(value),
+        observeAttrTelemetry: this.getObserveAttrTelemetryObjects(value.objectsList),
         bootstrap: this.configurationValue.bootstrap,
         clientLwM2mSettings: {
           clientOnlyObserveAfterConnect: this.configurationValue.clientLwM2mSettings.clientOnlyObserveAfterConnect,
@@ -255,8 +258,7 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
           swUpdateStrategy: this.configurationValue.clientLwM2mSettings.swUpdateStrategy || 1,
           fwUpdateResource: fwResource,
           swUpdateResource: swResource,
-          powerMode: this.configurationValue.clientLwM2mSettings.powerMode || PowerMode.DRX,
-          compositeOperationsSupport: this.configurationValue.clientLwM2mSettings.compositeOperationsSupport || false
+          powerMode: this.configurationValue.clientLwM2mSettings.powerMode
         }
       },
       {emitEvent: false});
@@ -285,7 +287,7 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
 
   private updateDeviceProfileValue(config): void {
     if (this.lwm2mDeviceProfileFormGroup.valid) {
-      this.updateObserveAttrTelemetryFromGroupToJson(config.observeAttrTelemetry);
+      this.updateObserveAttrTelemetryFromGroupToJson(config.observeAttrTelemetry.clientLwM2M);
     }
     this.configurationValue.bootstrap.bootstrapServer = config.bootstrap.bootstrapServer;
     this.configurationValue.bootstrap.lwm2mServer = config.bootstrap.lwm2mServer;
@@ -295,7 +297,7 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
     this.updateModel();
   }
 
-  private getObserveAttrTelemetryObjects = (objectList: ObjectLwM2M[]): ObjectLwM2M[] => {
+  private getObserveAttrTelemetryObjects = (objectList: ObjectLwM2M[]): object => {
     const objectLwM2MS = deepClone(objectList);
     if (this.configurationValue.observeAttr && objectLwM2MS.length > 0) {
       const attributeArray = this.configurationValue.observeAttr.attribute;
@@ -315,7 +317,7 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
         this.updateObserveAttrTelemetryObjects(telemetryArray, objectLwM2MS, TELEMETRY);
       }
       if (isDefinedAndNotNull(this.configurationValue.observeAttr.attributeLwm2m)) {
-        this.updateAttributes(objectLwM2MS);
+        this.updateAttributeLwm2m(objectLwM2MS);
       }
       if (isDefinedAndNotNull(keyNameJson)) {
         this.configurationValue.observeAttr.keyName = this.validateKeyNameObjects(keyNameJson, attributeArray, telemetryArray);
@@ -323,14 +325,13 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
         this.updateKeyNameObjects(objectLwM2MS);
       }
     }
-    return objectLwM2MS;
+    return {clientLwM2M: objectLwM2MS};
   }
 
   private includesNotZeroInstance = (attribute: string[], telemetry: string[]): boolean => {
     const isNotZeroInstanceId = (instance) => !instance.includes('/0/');
     return attribute.some(isNotZeroInstanceId) || telemetry.some(isNotZeroInstanceId);
   }
-
   private addInstances = (attribute: string[], telemetry: string[], clientObserveAttrTelemetry: ObjectLwM2M[]): void => {
     const instancesPath = attribute.concat(telemetry)
       .filter(instance => !instance.includes('/0/'))
@@ -368,7 +369,7 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
     });
   }
 
-  private updateAttributes = (objectLwM2MS: ObjectLwM2M[]): void => {
+  private updateAttributeLwm2m = (objectLwM2MS: ObjectLwM2M[]): void => {
     Object.keys(this.configurationValue.observeAttr.attributeLwm2m).forEach(key => {
       const [objectKeyId, instanceId, resourceId] = Array.from(key.substring(1).split('/'), String);
       const objectLwM2M = objectLwM2MS.find(objectLwm2m => objectLwm2m.keyId === objectKeyId);
@@ -376,12 +377,12 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
         const instance = objectLwM2M.instances.find(obj => obj.id === +instanceId);
         if (instance && resourceId) {
           instance.resources.find(resource => resource.id === +resourceId)
-            .attributes = this.configurationValue.observeAttr.attributeLwm2m[key];
+            .attributeLwm2m = this.configurationValue.observeAttr.attributeLwm2m[key];
         } else if (instance) {
-          instance.attributes = this.configurationValue.observeAttr.attributeLwm2m[key];
+          instance.attributeLwm2m = this.configurationValue.observeAttr.attributeLwm2m[key];
         }
       } else if (objectLwM2M) {
-        objectLwM2M.attributes = this.configurationValue.observeAttr.attributeLwm2m[key];
+        objectLwM2M.attributeLwm2m = this.configurationValue.observeAttr.attributeLwm2m[key];
       }
     });
   }
@@ -414,19 +415,19 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
     const observeArray: Array<string> = [];
     const attributeArray: Array<string> = [];
     const telemetryArray: Array<string> = [];
-    const attributes: any = {};
+    const attributeLwm2m: any = {};
     const keyNameNew = {};
     const observeJson: ObjectLwM2M[] = JSON.parse(JSON.stringify(val));
     observeJson.forEach(obj => {
-      if (isDefinedAndNotNull(obj.attributes) && !isEmpty(obj.attributes)) {
+      if (isDefinedAndNotNull(obj.attributeLwm2m) && !isEmpty(obj.attributeLwm2m)) {
         const pathObject = `/${obj.keyId}`;
-        attributes[pathObject] = obj.attributes;
+        attributeLwm2m[pathObject] = obj.attributeLwm2m;
       }
       if (obj.hasOwnProperty(INSTANCES) && Array.isArray(obj.instances)) {
         obj.instances.forEach(instance => {
-          if (isDefinedAndNotNull(instance.attributes) && !isEmpty(instance.attributes)) {
+          if (isDefinedAndNotNull(instance.attributeLwm2m) && !isEmpty(instance.attributeLwm2m)) {
             const pathInstance = `/${obj.keyId}/${instance.id}`;
-            attributes[pathInstance] = instance.attributes;
+            attributeLwm2m[pathInstance] = instance.attributeLwm2m;
           }
           if (instance.hasOwnProperty(RESOURCES) && Array.isArray(instance.resources)) {
             instance.resources.forEach(resource => {
@@ -442,8 +443,8 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
                   telemetryArray.push(pathRes);
                 }
                 keyNameNew[pathRes] = resource.keyName;
-                if (isDefinedAndNotNull(resource.attributes) && !isEmpty(resource.attributes)) {
-                  attributes[pathRes] = resource.attributes;
+                if (isDefinedAndNotNull(resource.attributeLwm2m) && !isEmpty(resource.attributeLwm2m)) {
+                  attributeLwm2m[pathRes] = resource.attributeLwm2m;
                 }
               }
             });
@@ -451,13 +452,21 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
         });
       }
     });
-    this.configurationValue.observeAttr = {
-      observe: observeArray,
-      attribute: attributeArray,
-      telemetry: telemetryArray,
-      keyName: this.sortObjectKeyPathJson(KEY_NAME, keyNameNew),
-      attributeLwm2m: attributes
-    };
+    if (isUndefined(this.configurationValue.observeAttr)) {
+      this.configurationValue.observeAttr = {
+        observe: observeArray,
+        attribute: attributeArray,
+        telemetry: telemetryArray,
+        keyName: this.sortObjectKeyPathJson(KEY_NAME, keyNameNew),
+        attributeLwm2m
+      };
+    } else {
+      this.configurationValue.observeAttr.observe = observeArray;
+      this.configurationValue.observeAttr.attribute = attributeArray;
+      this.configurationValue.observeAttr.telemetry = telemetryArray;
+      this.configurationValue.observeAttr.keyName = this.sortObjectKeyPathJson(KEY_NAME, keyNameNew);
+      this.configurationValue.observeAttr.attributeLwm2m = attributeLwm2m;
+    }
   }
 
   sortObjectKeyPathJson = (key: string, value: object): object => {
@@ -516,7 +525,7 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
   }
 
   removeObjectsList = (value: ObjectLwM2M): void => {
-    const objectsOld = this.lwm2mDeviceProfileFormGroup.get('observeAttrTelemetry').value;
+    const objectsOld = this.lwm2mDeviceProfileFormGroup.get(OBSERVE_ATTR_TELEMETRY).value.clientLwM2M;
     const isIdIndex = (element) => element.keyId === value.keyId;
     const index = objectsOld.findIndex(isIdIndex);
     if (index >= 0) {
@@ -526,7 +535,7 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
     this.removeObserveAttrTelemetryFromJson(TELEMETRY, value.keyId);
     this.removeObserveAttrTelemetryFromJson(ATTRIBUTE, value.keyId);
     this.removeKeyNameFromJson(value.keyId);
-    this.removeAttributesFromJson(value.keyId);
+    this.removeAttributeLwm2mFromJson(value.keyId);
     this.updateObserveAttrTelemetryObjectFormGroup(objectsOld);
     this.upDateJsonAllConfig();
   }
@@ -549,7 +558,7 @@ export class Lwm2mDeviceProfileTransportConfigurationComponent implements Contro
     });
   }
 
-  private removeAttributesFromJson = (keyId: string): void => {
+  private removeAttributeLwm2mFromJson = (keyId: string): void => {
     const keyNameJson = this.configurationValue.observeAttr.attributeLwm2m;
     Object.keys(keyNameJson).forEach(key => {
       if (key.startsWith(`/${keyId}`)) {

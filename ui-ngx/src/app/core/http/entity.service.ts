@@ -19,7 +19,7 @@ import { EMPTY, forkJoin, Observable, of, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { PageLink } from '@shared/models/page/page-link';
 import { AliasEntityType, EntityType } from '@shared/models/entity-type.models';
-import { BaseData, HasId } from '@shared/models/base-data';
+import { BaseData } from '@shared/models/base-data';
 import { EntityId } from '@shared/models/id/entity-id';
 import { DeviceService } from '@core/http/device.service';
 import { TenantService } from '@core/http/tenant.service';
@@ -77,11 +77,10 @@ import {
 import { alarmFields } from '@shared/models/alarm.models';
 import { OtaPackageService } from '@core/http/ota-package.service';
 import { EdgeService } from '@core/http/edge.service';
-import { Edge, EdgeEvent, EdgeEventType } from '@shared/models/edge.models';
-import { RuleChainMetaData, RuleChainType } from '@shared/models/rule-chain.models';
+import { Edge, EdgeEventType } from '@shared/models/edge.models';
+import { RuleChainType } from '@shared/models/rule-chain.models';
 import { WidgetService } from '@core/http/widget.service';
 import { DeviceProfileService } from '@core/http/device-profile.service';
-
 
 @Injectable({
   providedIn: 'root'
@@ -116,7 +115,7 @@ export class EntityService {
       case EntityType.DEVICE:
         observable = this.deviceService.getDevice(entityId, config);
         break;
-        case EntityType.ASSET:
+      case EntityType.ASSET:
         observable = this.assetService.getAsset(entityId, config);
         break;
       case EntityType.EDGE:
@@ -1012,6 +1011,7 @@ export class EntityService {
         }
         saveEntityObservable = this.deviceService.saveDevice(device, config);
         break;
+
       case EntityType.ASSET:
         const asset: Asset = {
           name: entityData.name,
@@ -1343,8 +1343,8 @@ export class EntityService {
     return entitiesObservable;
   }
 
-  public getEdgeEventContent(entity: EdgeEvent): Observable<BaseData<HasId> | RuleChainMetaData | string> {
-    let entityObservable: Observable<BaseData<HasId> | RuleChainMetaData | string>;
+  public getEdgeEventContentByEntityType(entity: any): Observable<any> {
+    let entityObservable: Observable<any>;
     const entityId: string = entity.entityId;
     const entityType: any = entity.type;
     switch (entityType) {

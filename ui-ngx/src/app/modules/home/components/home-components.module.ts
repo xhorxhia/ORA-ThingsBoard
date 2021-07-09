@@ -110,9 +110,6 @@ import { RuleChainAutocompleteComponent } from '@home/components/rule-chain/rule
 import { DeviceProfileProvisionConfigurationComponent } from '@home/components/profile/device-profile-provision-configuration.component';
 import { AlarmScheduleComponent } from '@home/components/profile/alarm/alarm-schedule.component';
 import { DeviceWizardDialogComponent } from '@home/components/wizard/device-wizard-dialog.component';
-
-import { TestWizardDialogComponent } from '@home/components/wizard/test-wizard-dialog.component';
-
 import { DeviceCredentialsComponent } from '@home/components/device/device-credentials.component';
 import { AlarmScheduleInfoComponent } from '@home/components/profile/alarm/alarm-schedule-info.component';
 import { AlarmScheduleDialogComponent } from '@home/components/profile/alarm/alarm-schedule-dialog.component';
@@ -146,6 +143,7 @@ import { SecurityConfigLwm2mServerComponent } from '@home/components/device/secu
 import { DashboardImageDialogComponent } from '@home/components/dashboard-page/dashboard-image-dialog.component';
 import { WidgetContainerComponent } from '@home/components/widget/widget-container.component';
 import { SnmpDeviceProfileTransportModule } from '@home/components/profile/device/snpm/snmp-device-profile-transport.module';
+import {TestWizardDialogComponent} from "@home/components/wizard/test-wizard-dialog.component";
 
 @NgModule({
   declarations:
@@ -246,7 +244,6 @@ import { SnmpDeviceProfileTransportModule } from '@home/components/profile/devic
       DeviceProfileProvisionConfigurationComponent,
       AlarmScheduleComponent,
       DeviceWizardDialogComponent,
-      TestWizardDialogComponent,
       DeviceCredentialsComponent,
       CopyDeviceCredentialsComponent,
       SecurityConfigLwm2mComponent,
@@ -268,7 +265,8 @@ import { SnmpDeviceProfileTransportModule } from '@home/components/profile/devic
       DashboardStateDialogComponent,
       DashboardImageDialogComponent,
       EmbedDashboardDialogComponent,
-      DisplayWidgetTypesPanelComponent
+      DisplayWidgetTypesPanelComponent,
+      TestWizardDialogComponent
     ],
   imports: [
     CommonModule,
