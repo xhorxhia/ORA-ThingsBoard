@@ -75,34 +75,37 @@ export class TestTableConfigResolver implements Resolve<EntityTableConfig<TestIn
 
     this.config.entityType = EntityType.TEST;
     this.config.entityComponent = TestComponent;
-    //this.config.entityTabsComponent = TestTabsComponent;
+   // this.config.entityTabsComponent = TestTabsComponent;
     this.config.entityTranslations = entityTypeTranslations.get(EntityType.TEST);
     this.config.entityResources = entityTypeResources.get(EntityType.TEST);
 
     this.config.addDialogStyle = {width: '600px'};
 
-    this.config.deleteEntityTitle = device => this.translate.instant('device.delete-device-title', { deviceName: device.name });
-    this.config.deleteEntityContent = () => this.translate.instant('device.delete-device-text');
-    this.config.deleteEntitiesTitle = count => this.translate.instant('device.delete-devices-title', {count});
-    this.config.deleteEntitiesContent = () => this.translate.instant('device.delete-devices-text');
+    this.config.deleteEntityTitle = test => this.translate.instant('test.delete-test-title', { testName: test.name });
+    this.config.deleteEntityContent = () => this.translate.instant('test.delete-test-text');
+    this.config.deleteEntitiesTitle = count => this.translate.instant('test.delete-tests-title', {count});
+    this.config.deleteEntitiesContent = () => this.translate.instant('test.delete-tests-text');
 
-    this.config.loadEntity = id => this.testService.getDeviceInfo(id.id);
-    this.config.saveEntity = device => {
-      return this.testService.saveTest(device).pipe(
+    this.config.loadEntity = id => this.testService.getTestInfo(id.id);
+    this.config.saveEntity = test => {
+      return this.testService.saveTest(test).pipe(
         tap(() => {
-          this.broadcast.broadcast('deviceSaved');
+          this.broadcast.broadcast('testSaved');
         }),
-        mergeMap((savedDevice) => this.testService.getDeviceInfo(savedDevice.id.id)
+        mergeMap((savedTest) => this.testService.getTestInfo(savedTest.id.id)
         ));
+
     };
     //this.config.onEntityAction = action => this.onDeviceAction(action);
     this.config.detailsReadonly = () => this.config.componentsData.deviceScope === 'customer_user';
 
-    //this.config.headerComponent = TestTableHeaderComponent;
+    this.config.headerComponent = TestTableHeaderComponent;
+
   }
 
   resolve(route: ActivatedRouteSnapshot): Observable<EntityTableConfig<TestInfo>> {
     const routeParams = route.params;
+    console.log("helloo : ", route.data);
 
     this.config.componentsData = {
       deviceScope: route.data.devicesType,
@@ -123,10 +126,10 @@ export class TestTableConfigResolver implements Resolve<EntityTableConfig<TestIn
           if (parentCustomer.additionalInfo && parentCustomer.additionalInfo.isPublic) {
             this.config.tableTitle = this.translate.instant('customer.public-devices'); //Public Devices
           } else {
-            this.config.tableTitle = parentCustomer.title + ': ' + this.translate.instant('testObj.test');
+            this.config.tableTitle = parentCustomer.title + ': ' + this.translate.instant('test.test');
           }
         } else {
-          this.config.tableTitle = this.translate.instant('testObj.test');
+          this.config.tableTitle = this.translate.instant('test.test');
         }
         this.config.columns = this.configureColumns(this.config.componentsData.deviceScope);
         this.configureEntityFunctions(this.config.componentsData.deviceScope);
@@ -139,28 +142,28 @@ export class TestTableConfigResolver implements Resolve<EntityTableConfig<TestIn
     );
   }
 
-  configureColumns(deviceScope: string): Array<EntityTableColumn<TestInfo>> {
+  configureColumns(testScope: string): Array<EntityTableColumn<TestInfo>> {
     const columns: Array<EntityTableColumn<TestInfo>> = [
       new DateEntityTableColumn<TestInfo>('createdTime', 'common.created-time', this.datePipe, '150px'),
       new EntityTableColumn<TestInfo>('name', 'Name', '25%'),
       new EntityTableColumn<TestInfo>('road', 'Road', '25%'),
       new EntityTableColumn<TestInfo>('accidentType', 'Accident type', '25%'),
-      new EntityTableColumn<TestInfo>('nr_of_vehicles', 'Nr of Vehicles', '25%'),
+      new EntityTableColumn<TestInfo>('nrOfVehicles', 'Nr of Vehicles', '25%'),
       new EntityTableColumn<TestInfo>('description', 'Description', '25%'),
     ];
     return columns;
   }
 
-  configureEntityFunctions(deviceScope: string): void {
-    if (deviceScope === 'tenant') {
+  configureEntityFunctions(testScope: string): void {
+    if (testScope === 'tenant') {
       this.config.entitiesFetchFunction = pageLink =>
-        this.testService.getTenantDeviceInfos(pageLink);
-      this.config.deleteEntity = id => this.testService.deleteDevice(id.id);
-    } else {
-      this.config.entitiesFetchFunction = pageLink =>
-        this.testService.getCustomerDeviceInfosByDeviceProfileId(this.customerId, pageLink,
-          this.config.componentsData.deviceProfileId !== null ?
-            this.config.componentsData.deviceProfileId.id : '');
+        this.testService.getTenantTestInfos(pageLink);
+      this.config.deleteEntity = id => this.testService.deleteTest(id.id);
+    // } else {
+    //   this.config.entitiesFetchFunction = pageLink =>
+    //     this.testService.getCustomerDeviceInfosByDeviceProfileId(this.customerId, pageLink,
+    //       this.config.componentsData.deviceProfileId !== null ?
+    //         this.config.componentsData.deviceProfileId.id : '');
       //this.config.deleteEntity = id => this.testService.unassignDeviceFromCustomer(id.id);
     }
   }
@@ -168,34 +171,34 @@ export class TestTableConfigResolver implements Resolve<EntityTableConfig<TestIn
 
 
 
-  configureAddActions(deviceScope: string): Array<HeaderActionDescriptor> {
+  configureAddActions(testScope: string): Array<HeaderActionDescriptor> {
     const actions: Array<HeaderActionDescriptor> = [];
-    // Add new device wizard is opened
-    if (deviceScope === 'tenant') {
+    // Add new test wizard is opened
+    if (testScope === 'tenant') {
       actions.push(
         {
-          name: this.translate.instant('testObj.add-test-text'),
+          name: this.translate.instant('test.add-test-text'),
           icon: 'insert_drive_file',
           isEnabled: () => true,
-          onAction: ($event) => this.deviceWizard($event)
+          onAction: ($event) => this.testWizard($event)
         }
       );
     }
-    if (deviceScope === 'customer') {
-      actions.push(
-        {
-          name: this.translate.instant('device.assign-new-device'),
-          icon: 'add',
-          isEnabled: () => true,
-          onAction: ($event) => this.addDevicesToCustomer($event)
-        }
-      );
-    }
+    // if (deviceScope === 'customer') {
+    //   actions.push(
+    //     {
+    //       name: this.translate.instant('device.assign-new-device'),
+    //       icon: 'add',
+    //       isEnabled: () => true,
+    //       onAction: ($event) => this.addDevicesToCustomer($event)
+    //     }
+    //   );
+    // }
     return actions;
   }
 
 
-  deviceWizard($event: Event) {
+  testWizard($event: Event) {
     this.dialog.open<TestWizardDialogComponent, AddEntityDialogData<BaseData<HasId>>,
       boolean>(TestWizardDialogComponent, {
       disableClose: true,
@@ -212,25 +215,25 @@ export class TestTableConfigResolver implements Resolve<EntityTableConfig<TestIn
     );
   }
 
-  addDevicesToCustomer($event: Event) {
-    if ($event) {
-      $event.stopPropagation();
-    }
-    this.dialog.open<AddEntitiesToCustomerDialogComponent, AddEntitiesToCustomerDialogData,
-      boolean>(AddEntitiesToCustomerDialogComponent, {
-      disableClose: true,
-      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
-      data: {
-        customerId: this.customerId,
-        entityType: EntityType.TEST
-      }
-    }).afterClosed()
-      .subscribe((res) => {
-        if (res) {
-          this.config.table.updateData();
-        }
-      });
-  }
+  // addDevicesToCustomer($event: Event) {
+  //   if ($event) {
+  //     $event.stopPropagation();
+  //   }
+  //   this.dialog.open<AddEntitiesToCustomerDialogComponent, AddEntitiesToCustomerDialogData,
+  //     boolean>(AddEntitiesToCustomerDialogComponent, {
+  //     disableClose: true,
+  //     panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+  //     data: {
+  //       customerId: this.customerId,
+  //       entityType: EntityType.TEST
+  //     }
+  //   }).afterClosed()
+  //     .subscribe((res) => {
+  //       if (res) {
+  //         this.config.table.updateData();
+  //       }
+  //     });
+  //}
 
 
 }

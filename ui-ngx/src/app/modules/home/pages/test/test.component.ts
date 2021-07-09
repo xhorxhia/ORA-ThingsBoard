@@ -19,16 +19,12 @@ import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import { EntityComponent } from '../../components/entity/entity.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
 import { EntityType } from '@shared/models/entity-type.models';
 import { NULL_UUID } from '@shared/models/id/has-uuid';
 import { ActionNotificationShow } from '@core/notification/notification.actions';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityTableConfig } from '@home/models/entity/entities-table-config.models';
-import { Subject } from 'rxjs';
-import { OtaUpdateType } from '@shared/models/ota-package.models';
-import { distinctUntilChanged } from 'rxjs/operators';
-import {TestCredentials, TestInfo} from "@shared/models/test.models";
+import { TestInfo } from "@shared/models/test.models";
 
 @Component({
   selector: 'tb-test',
@@ -39,7 +35,7 @@ export class TestComponent extends EntityComponent<TestInfo> {
 
   entityType = EntityType;
 
-  deviceScope: 'tenant' | 'customer' | 'customer_user';
+  testScope: 'tenant' | 'customer' | 'customer_user';
 
   constructor(protected store: Store<AppState>,
               protected translate: TranslateService,
@@ -50,7 +46,7 @@ export class TestComponent extends EntityComponent<TestInfo> {
   }
 
   ngOnInit() {
-    this.deviceScope = this.entitiesTableConfig.componentsData.deviceScope;
+    this.testScope = this.entitiesTableConfig.componentsData.testScope;
     super.ngOnInit();
   }
 
@@ -62,38 +58,32 @@ export class TestComponent extends EntityComponent<TestInfo> {
     }
   }
 
-  isAssignedToCustomer(entity: TestInfo): boolean {
-    return entity && entity.customerId && entity.customerId.id !== NULL_UUID;
-  }
-
   buildForm(entity: TestInfo): FormGroup {
-    const form = this.fb.group(
+    return this.fb.group(
       {
-        name: [entity ? entity.name : '', [Validators.required]],
-        road: [entity ? entity.road : '', [Validators.required]],
-        accidentType: [entity ? entity.accidentType : '', [Validators.required]],
-        nr_of_vehicles: [entity ? entity.nr_of_vehicles : '', [Validators.required]],
-        description: [entity ? entity.description : '', [Validators.required]]
+        name: ['', Validators.required],
+        road: ['', Validators.required],
+        accidentType: ['', Validators.required],
+        nrOfVehicles: ['', Validators.required],
+        description: ['']
+
       }
     );
-    return form;
   }
 
   updateForm(entity: TestInfo) {
-    this.entityForm.patchValue({
-      name: entity.name,
-      road: entity.road,
-      accidentType: entity.accidentType,
-      nr_of_vehicles: entity.nr_of_vehicles,
-      description: entity.description
-    });
+    this.entityForm.patchValue({name: entity.name});
+    this.entityForm.patchValue({type: entity.road});
+    this.entityForm.patchValue({label: entity.accidentType});
+    this.entityForm.patchValue({type: entity.nrOfVehicles});
+    this.entityForm.patchValue({label: entity.description});
   }
 
 
-  onDeviceIdCopied($event) {
+  onTestIdCopied($event) {
     this.store.dispatch(new ActionNotificationShow(
       {
-        message: this.translate.instant('device.idCopiedMessage'),
+        message: this.translate.instant('test.idCopiedMessage'),
         type: 'success',
         duration: 750,
         verticalPosition: 'bottom',
@@ -101,9 +91,7 @@ export class TestComponent extends EntityComponent<TestInfo> {
       }));
   }
 
-  onDeviceProfileUpdated() {
-    this.entitiesTableConfig.table.updateData(false);
-  }
+
 
 
 }

@@ -32,10 +32,8 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { MediaBreakpoints } from '@shared/models/constants';
-import { RuleChainId } from '@shared/models/id/rule-chain-id';
-import { ServiceType } from '@shared/models/queue.models';
 import { deepTrim } from '@core/utils';
-import {TestService} from "@core/http/test.service";
+import { TestService } from '@app/core/http/test.service';
 
 @Component({
   selector: 'tb-test-wizard',
@@ -49,17 +47,12 @@ export class TestWizardDialogComponent extends
   @ViewChild('addTestWizardStepper', {static: true}) addTestWizardStepper: MatHorizontalStepper;
 
   selectedIndex = 0;
-
   showNext = true;
 
   createProfile = false;
-
   entityType = EntityType;
-
   testWizardFormGroup: FormGroup;
-
   private subscriptions: Subscription[] = [];
-
   labelPosition = 'end';
 
   constructor(protected store: Store<AppState>,
@@ -72,81 +65,15 @@ export class TestWizardDialogComponent extends
               private fb: FormBuilder) {
     super(store, router, dialogRef);
     this.testWizardFormGroup = this.fb.group({
-        name: ['', Validators.required],
-        road: [''],
-        accidentType: [''],
-        nr_of_vehicles: [''],
-        description: ['']
+      name: ['', Validators.required],
+      road: ['', Validators.required],
+      accidentType: ['', Validators.required],
+      nrOfVehicles: ['', Validators.required],
+      description: ['']
       }
     );
 
-    // this.subscriptions.push(this.deviceWizardFormGroup.get('addProfileType').valueChanges.subscribe(
-    //   (addProfileType: number) => {
-    //     if (addProfileType === 0) {
-    //       this.deviceWizardFormGroup.get('deviceProfileId').setValidators([Validators.required]);
-    //       this.deviceWizardFormGroup.get('deviceProfileId').enable();
-    //       this.deviceWizardFormGroup.get('newDeviceProfileTitle').setValidators(null);
-    //       this.deviceWizardFormGroup.get('newDeviceProfileTitle').disable();
-    //       this.deviceWizardFormGroup.get('defaultRuleChainId').disable();
-    //       this.deviceWizardFormGroup.get('defaultQueueName').disable();
-    //       this.deviceWizardFormGroup.updateValueAndValidity();
-    //       this.createProfile = false;
-    //     } else {
-    //       this.deviceWizardFormGroup.get('deviceProfileId').setValidators(null);
-    //       this.deviceWizardFormGroup.get('deviceProfileId').disable();
-    //       this.deviceWizardFormGroup.get('newDeviceProfileTitle').setValidators([Validators.required]);
-    //       this.deviceWizardFormGroup.get('newDeviceProfileTitle').enable();
-    //       this.deviceWizardFormGroup.get('defaultRuleChainId').enable();
-    //       this.deviceWizardFormGroup.get('defaultQueueName').enable();
-    //
-    //       this.deviceWizardFormGroup.updateValueAndValidity();
-    //       this.createProfile = true;
-    //     }
-    //   }
-    // ));
 
-    // this.transportConfigFormGroup = this.fb.group(
-    //   {
-    //     transportType: [DeviceTransportType.DEFAULT, Validators.required],
-    //     transportConfiguration: [createDeviceProfileTransportConfiguration(DeviceTransportType.DEFAULT), Validators.required]
-    //   }
-    // );
-    //
-    // this.subscriptions.push(this.transportConfigFormGroup.get('transportType').valueChanges.subscribe((transportType) => {
-    //   this.deviceProfileTransportTypeChanged(transportType);
-    // }));
-    //
-    // this.alarmRulesFormGroup = this.fb.group({
-    //     alarms: [null]
-    //   }
-    // );
-    //
-    // this.provisionConfigFormGroup = this.fb.group(
-    //   {
-    //     provisionConfiguration: [{
-    //       type: DeviceProvisionType.DISABLED
-    //     } as DeviceProvisionConfiguration, [Validators.required]]
-    //   }
-    // );
-    //
-    // this.credentialsFormGroup  = this.fb.group({
-    //     setCredential: [false],
-    //     credential: [{value: null, disabled: true}]
-    //   }
-    // );
-    //
-    // this.subscriptions.push(this.credentialsFormGroup.get('setCredential').valueChanges.subscribe((value) => {
-    //   if (value) {
-    //     this.credentialsFormGroup.get('credential').enable();
-    //   } else {
-    //     this.credentialsFormGroup.get('credential').disable();
-    //   }
-    // }));
-    //
-    // this.customerFormGroup = this.fb.group({
-    //     customerId: [null]
-    //   }
-    // );
 
     this.labelPosition = this.breakpointObserver.isMatched(MediaBreakpoints['gt-sm']) ? 'end' : 'bottom';
 
@@ -193,15 +120,15 @@ export class TestWizardDialogComponent extends
     }
     switch (index) {
       case 0:
-        return 'device.wizard.device-details';
+        return 'test.wizard.test-detailsss';
       case 1:
-        return 'device-profile.transport-configuration';
+        return 'test-profile.transport-configuration';
       case 2:
-        return 'device-profile.alarm-rules';
+        return 'test-profile.alarm-rules';
       case 3:
-        return 'device-profile.device-provisioning';
+        return 'test-profile.test-provisioning';
       case 4:
-        return 'device.credentials';
+        return 'test.credentials';
       case 5:
         return 'customer.customer';
     }
@@ -213,95 +140,29 @@ export class TestWizardDialogComponent extends
 
 
   add(): void {
-    this.createDevice();
-    // if (this.allValid()) {
-    //   this.createDeviceProfile().pipe(
-    //     mergeMap(profileId => this.createDevice(profileId)),
-    //     mergeMap(device => this.saveCredentials(device))
-    //   ).subscribe(
-    //     (created) => {
-    //       this.dialogRef.close(created);
-    //     }
-    //   );
-    // }
+    console.log(" adddddddddddd");
+
+    this.createTest();
+
   }
 
-  // private createDeviceProfile(): Observable<EntityId> {
-  //   if (this.deviceWizardFormGroup.get('addProfileType').value) {
-  //     const deviceProvisionConfiguration: DeviceProvisionConfiguration = this.provisionConfigFormGroup.get('provisionConfiguration').value;
-  //     const provisionDeviceKey = deviceProvisionConfiguration.provisionDeviceKey;
-  //     delete deviceProvisionConfiguration.provisionDeviceKey;
-  //     const deviceProfile: DeviceProfile = {
-  //       name: this.deviceWizardFormGroup.get('newDeviceProfileTitle').value,
-  //       type: DeviceProfileType.DEFAULT,
-  //       transportType: this.transportConfigFormGroup.get('transportType').value,
-  //       provisionType: deviceProvisionConfiguration.type,
-  //       provisionDeviceKey,
-  //       profileData: {
-  //         configuration: createDeviceProfileConfiguration(DeviceProfileType.DEFAULT),
-  //         transportConfiguration: this.transportConfigFormGroup.get('transportConfiguration').value,
-  //         alarms: this.alarmRulesFormGroup.get('alarms').value,
-  //         provisionConfiguration: deviceProvisionConfiguration
-  //       }
-  //     };
-  //     if (this.deviceWizardFormGroup.get('defaultRuleChainId').value) {
-  //       deviceProfile.defaultRuleChainId = new RuleChainId(this.deviceWizardFormGroup.get('defaultRuleChainId').value);
-  //     }
-  //     return this.deviceProfileService.saveDeviceProfile(deepTrim(deviceProfile)).pipe(
-  //       map(profile => profile.id),
-  //       tap((profileId) => {
-  //         this.deviceWizardFormGroup.patchValue({
-  //           deviceProfileId: profileId,
-  //           addProfileType: 0
-  //         });
-  //       })
-  //     );
-  //   } else {
-  //     return of(this.deviceWizardFormGroup.get('deviceProfileId').value);
-  //   }
-  // }
 
-  private createDevice(): Observable<BaseData<HasId>> {
-    const device = {
+  private createTest(): Observable<BaseData<HasId>> {
+    console.log( this.testWizardFormGroup.get('name').value + " ------------");
+    const test = {
       name: this.testWizardFormGroup.get('name').value,
       road: this.testWizardFormGroup.get('road').value,
       accidentType: this.testWizardFormGroup.get('accidentType').value,
-      nr_of_vehicles: this.testWizardFormGroup.get('nr_of_vehicles').value,
+      nrOfVehicles: this.testWizardFormGroup.get('nrOfVehicles').value,
       description: this.testWizardFormGroup.get('description').value,
 
       customerId: null
     };
-    // if (this.customerFormGroup.get('customerId').value) {
-    //   device.customerId = {
-    //     entityType: EntityType.CUSTOMER,
-    //     id: this.customerFormGroup.get('customerId').value
-    //   };
-    // }
-    this.testService.saveTest(device).subscribe();
-    return this.data.entitiesTableConfig.saveEntity(deepTrim(device));
+    console.log("----:::  ", test)
+    this.testService.saveTest(test).subscribe();
+    return this.data.entitiesTableConfig.saveEntity(deepTrim(test));
   }
 
-  // private saveCredentials(device: BaseData<HasId>): Observable<boolean> {
-  //   if (this.credentialsFormGroup.get('setCredential').value) {
-  //     return this.deviceService.getDeviceCredentials(device.id.id).pipe(
-  //       mergeMap(
-  //         (deviceCredentials) => {
-  //           const deviceCredentialsValue = {...deviceCredentials, ...this.credentialsFormGroup.value.credential};
-  //           return this.deviceService.saveDeviceCredentials(deviceCredentialsValue).pipe(
-  //             catchError(e => {
-  //               return this.deviceService.deleteDevice(device.id.id).pipe(
-  //                 mergeMap(() => {
-  //                   return throwError(e);
-  //                 }
-  //               ));
-  //             })
-  //           );
-  //         }
-  //       ),
-  //       map(() => true));
-  //   }
-  //   return of(true);
-  // }
 
   allValid(): boolean {
     if (this.addTestWizardStepper.steps.find((item, index) => {

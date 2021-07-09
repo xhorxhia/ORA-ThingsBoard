@@ -18,16 +18,15 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '@core/core.state';
 import { EntityTableHeaderComponent } from '../../components/entity/entity-table-header.component';
-import { DeviceInfo } from '@shared/models/device.models';
 import { EntityType } from '@shared/models/entity-type.models';
-import { DeviceProfileId } from '../../../../shared/models/id/device-profile-id';
+import {TestInfo} from "@shared/models/test.models";
 
 @Component({
   selector: 'tb-device-table-header',
   templateUrl: './test-table-header.component.html',
   styleUrls: ['./test-table-header.component.scss']
 })
-export class TestTableHeaderComponent extends EntityTableHeaderComponent<DeviceInfo> {
+export class TestTableHeaderComponent extends EntityTableHeaderComponent<TestInfo> {
 
   entityType = EntityType;
 
@@ -35,9 +34,9 @@ export class TestTableHeaderComponent extends EntityTableHeaderComponent<DeviceI
     super(store);
   }
 
-  deviceProfileChanged(deviceProfileId: DeviceProfileId) {
-    this.entitiesTableConfig.componentsData.deviceProfileId = deviceProfileId;
-    this.entitiesTableConfig.table.resetSortAndFilter(true);
-  }
+  // deviceProfileChanged(deviceProfileId: DeviceProfileId) {
+  //   this.entitiesTableConfig.componentsData.deviceProfileId = deviceProfileId;
+  //   this.entitiesTableConfig.table.resetSortAndFilter(true);
+  // }
 
 }

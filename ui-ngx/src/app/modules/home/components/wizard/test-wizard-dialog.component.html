@@ -1,22 +1,17 @@
 <!--
-
     Copyright © 2016-2021 The Thingsboard Authors
-
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
-
         http://www.apache.org/licenses/LICENSE-2.0
-
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
 -->
 
-<!-- *********** -->
+<!-- ******************************* -->
 <!-- Add test popup -->
 <div>
   <mat-toolbar color="primary">
@@ -32,21 +27,22 @@
   </mat-progress-bar>
   <div style="height: 4px;" *ngIf="!(isLoading$ | async)"></div>
   <div mat-dialog-content>
-    <mat-horizontal-stepper [linear]="true" [labelPosition]="labelPosition" #addTestWizardStepper (selectionChange)="changeStep($event)">
+    <mat-horizontal-stepper [linear]="true" [labelPosition]="labelPosition" #addTestingWizardStepper (selectionChange)="changeStep($event)">
       <ng-template matStepperIcon="edit">
         <mat-icon>check</mat-icon>
       </ng-template>
+
       <mat-step [stepControl]="testWizardFormGroup">
         <form [formGroup]="testWizardFormGroup" style="padding-bottom: 16px;">
-          <!-- Test Details text on wizard -->
-          <ng-template matStepLabel>{{ 'device.wizard.device-details' | translate}}</ng-template>
+          <!-- Device Details text on wizard -->
+          <ng-template matStepLabel>{{ 'Test details' | translate}}</ng-template>
           <fieldset [disabled]="isLoading$ | async">
             <mat-form-field class="mat-block">
               <!-- Name* -->
-              <mat-label translate>device.name</mat-label>
+              <mat-label translate>test.name</mat-label>
               <input matInput formControlName="name" required>
               <mat-error *ngIf="testWizardFormGroup.get('name').hasError('required')">
-                {{ 'device.name-required' | translate }}
+                {{ 'test.name-required' | translate }}
               </mat-error>
             </mat-form-field>
 
@@ -55,7 +51,7 @@
               <mat-label >Road</mat-label>
               <input matInput formControlName="road" required>
               <mat-error *ngIf="testWizardFormGroup.get('road').hasError('required')">
-                {{ 'device.name-required' | translate }}
+                {{ 'test.road-required' | translate }}
               </mat-error>
             </mat-form-field>
 
@@ -65,88 +61,31 @@
               <mat-label>Accident Type</mat-label>
               <input matInput formControlName="accidentType" required>
               <mat-error *ngIf="testWizardFormGroup.get('accidentType').hasError('required')">
-                {{ 'device.name-required' | translate }}
+                {{ 'test.accidentType-required' | translate }}
               </mat-error>
             </mat-form-field>
 
             <mat-form-field class="mat-block">
               <!-- Name* -->
-              <mat-label>Nr of Vehicles</mat-label>
-              <input matInput formControlName="nr_of_vehicles" required>
-              <mat-error *ngIf="testWizardFormGroup.get('nr_of_vehicles').hasError('required')">
-                {{ 'device.name-required' | translate }}
+              <mat-label>Nr Of Vehicles</mat-label>
+              <input matInput formControlName="nrOfVehicles" required>
+              <mat-error *ngIf="testWizardFormGroup.get('nrOfVehicles').hasError('required')">
+                {{ 'test.nrOfVehicles-required' | translate }}
               </mat-error>
             </mat-form-field>
 
 
             <mat-form-field class="mat-block">
-              <mat-label translate>device.description</mat-label>
+              <mat-label translate>test.description</mat-label>
               <textarea matInput formControlName="description" rows="2"></textarea>
             </mat-form-field>
           </fieldset>
         </form>
       </mat-step>
-      <!-- <mat-step [stepControl]="transportConfigFormGroup" *ngIf="createTransportConfiguration">
-        <form [formGroup]="transportConfigFormGroup" style="padding-bottom: 16px;">
-          <ng-template matStepLabel>{{ 'device-profile.transport-configuration' | translate }}</ng-template>
-          <tb-device-profile-transport-configuration
-            formControlName="transportConfiguration"
-            required>
-          </tb-device-profile-transport-configuration>
-        </form>
-      </mat-step>
-      <mat-step [stepControl]="alarmRulesFormGroup" [optional]="true" *ngIf="createProfile">
-        <form [formGroup]="alarmRulesFormGroup" style="padding-bottom: 16px;">
-          <ng-template matStepLabel>{{'device-profile.alarm-rules-with-count' | translate:
-            {count: alarmRulesFormGroup.get('alarms').value ?
-                alarmRulesFormGroup.get('alarms').value.length : 0} }}</ng-template>
-          <tb-device-profile-alarms
-            formControlName="alarms"
-            [deviceProfileId]="null">
-          </tb-device-profile-alarms>
-        </form>
-      </mat-step>
-      <mat-step [stepControl]="provisionConfigFormGroup" [optional]="true" *ngIf="createProfile">
-        <form [formGroup]="provisionConfigFormGroup" style="padding-bottom: 16px;">
-          <ng-template matStepLabel>{{ 'device-profile.device-provisioning' | translate }}</ng-template>
-          <tb-device-profile-provision-configuration
-            formControlName="provisionConfiguration">
-          </tb-device-profile-provision-configuration>
-        </form>
-      </mat-step> -->
-      <!-- <mat-step [stepControl]="credentialsFormGroup" [optional]="true">
-        <ng-template matStepLabel>{{ 'device.credentials' | translate }}</ng-template>
-        <form [formGroup]="credentialsFormGroup" style="padding-bottom: 16px;">
-          <mat-checkbox style="padding-bottom: 16px;" formControlName="setCredential">{{ 'device.wizard.add-credential' | translate }}</mat-checkbox>
-          <tb-device-credentials
-            [fxShow]="credentialsFormGroup.get('setCredential').value"
-            formControlName="credential">
-          </tb-device-credentials>
-        </form>
-      </mat-step>
-      <mat-step [stepControl]="customerFormGroup" [optional]="true">
-        <ng-template matStepLabel>{{ 'customer.customer' | translate }}</ng-template>
-        <form [formGroup]="customerFormGroup" style="padding-bottom: 16px;">
-          <tb-entity-autocomplete
-            formControlName="customerId"
-            labelText="device.wizard.customer-to-assign-device"
-            [entityType]="entityType.CUSTOMER">
-          </tb-entity-autocomplete>
-        </form>
-      </mat-step> -->
+
     </mat-horizontal-stepper>
   </div>
-  <!-- <div mat-dialog-actions fxLayout="row">
-    <button mat-stroked-button *ngIf="selectedIndex > 0"
-            [disabled]="(isLoading$ | async)"
-            (click)="previousStep()">{{ 'action.back' | translate }}</button>
-    <span fxFlex></span>
-    <button mat-stroked-button
-            color="primary"
-            *ngIf="showNext"
-            [disabled]="(isLoading$ | async)"
-            (click)="nextStep()">{{ 'action.next-with-label' | translate:{label: (getFormLabel(this.selectedIndex+1) | translate)} }}</button>
-  </div> -->
+
   <mat-divider></mat-divider>
   <div mat-dialog-actions fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="end">
     <button mat-button
